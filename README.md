@@ -10,7 +10,7 @@ Library Name is a collection of utility methods for manipulating various data ty
 - Remove spaces from a string: `"a   b       c".RemoveDuplicateSpaces()`
 - Capitalize the first letter of each word in a string: `"vo thanh thuan".Capitalize()`
 - Convert a string to title case: `"vo thanh thuan".Title()`
-- Convert a string to title case: `string.Lorem()`
+- Convert a string to title case: `"".Lorem()`
 - Convert DataTable to List: `var list = dataTable.ToList<model>()`
 - Support string methods: `IsNullOrEmpty(), IsNullOrWhiteSpace()`
 - Perform calculations on a string expression: `"1+1".Calculate()`
@@ -64,7 +64,7 @@ string titleCase = title.Title(); // "Vo Thanh Thuan"
 string expression = "1+1";
 int result = expression.Calculate(); // 2
 
-string titleCase = string.Lorem(); // "lorem ipsum dolor sit vothuan"
+string titleCase = "".Lorem(); // "lorem ipsum dolor sit"
 
 "Hello".Log(); //like Console.WriteLine("Hello");
 
@@ -77,7 +77,6 @@ var list = dataTable.ToList<model>();
 
 ### Calculate
 ```csharp
-
 "sin(30)".Calculate(); //sin(30)> -0.9880316240928618
 "sin(30deg)".Calculate(); //sin(30deg)> 0.49999999999999994
 
@@ -129,4 +128,12 @@ var f = Test.b;
 "d> ".Log(d.IsFalse()); //d> false
 "e> ".Log(e.IsFalse()); //e> true
 "f> ".Log(f.IsFalse()); //f> false
+```
+
+### DataTable To List
+```csharp
+var list = dataTable.ToList<model>();
+
+//Match column name
+var list2 = dataTable.ToList<model>(matchCase: true);
 ```

@@ -156,12 +156,13 @@ namespace VTNET.Extensions
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="table"></param>
+        /// <param name="matchCase"></param>
         /// <returns></returns>
-        public static List<T> ToList<T>(this DataTable table) where T : new()
+        public static List<T> ToList<T>(this DataTable table, bool matchCase = false) where T : new()
         {
             var list = new List<T>();
             var properties = typeof(T).GetProperties()
-                .ToDictionary(prop => prop.GetCustomAttribute<ColumnNameAttribute>()?.Name ?? prop.Name, prop => prop.Name);
+                .ToDictionary(GetColumnName, prop => prop.Name, matchCase ? StringComparer.Ordinal : StringComparer.OrdinalIgnoreCase);
 
             foreach (DataRow row in table.Rows)
             {
@@ -169,16 +170,22 @@ namespace VTNET.Extensions
 
                 foreach (DataColumn column in table.Columns)
                 {
-                    if (properties.TryGetValue(column.ColumnName, out string value) && row[column] != DBNull.Value)
+                    if (properties.TryGetValue(column.ColumnName, out var propertyName) && row[column] != DBNull.Value)
                     {
-                        var propertyInfo = typeof(T).GetProperty(value);
-                        propertyInfo?.SetValue(item, Convert.ChangeType(row[column], propertyInfo.PropertyType), null);
+                        var propertyInfo = typeof(T).GetProperty(propertyName);
+                        propertyInfo?.SetValue(item, Convert.ChangeType(row[column], propertyInfo.PropertyType));
                     }
                 }
 
                 list.Add(item);
             }
             return list;
+        }
+
+        private static string GetColumnName(PropertyInfo prop)
+        {
+            var columnNameAttribute = prop.GetCustomAttribute<ColumnNameAttribute>();
+            return columnNameAttribute?.Name ?? prop.Name;
         }
 
         /// <summary>
