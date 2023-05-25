@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>enable</Nullable>
+    <Authors>Võ Thành Thuận</Authors>
+    <Description>Library Name is a collection of utility methods for manipulating various data types.</Description>
+    <Copyright>Copyright (c) 2023 Vo Thanh Thuan</Copyright>
+    <FileVersion></FileVersion>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<PackageReadmeFile>readme.md</PackageReadmeFile>
+	<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	<Version>1.0.0-beta</Version>
+
+	<!-- NuGet settings -->
+	<PackageId>VTNET.Extensions</PackageId>
+	<PackageTags>String; Extensions; Calculate; DataTableToList</PackageTags>
+	<PackageProjectUrl>https://github.com/VoThanhThuan/VTNET.Extensions</PackageProjectUrl>
+
+	<RepositoryType>git</RepositoryType>
+	<RepositoryUrl>https://github.com/VoThanhThuan/VTNET.Extensions</RepositoryUrl>
+	<PackageIcon>VTNET_E.png</PackageIcon>
+	<Title>More Useful Extensions</Title>
+
+  </PropertyGroup>
+	<ItemGroup>
+		<None Include="..\VTNET_E.png">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+		</None>
+		<None Include="LICENSE" Pack="True" PackagePath="\" />
+		<None Include="..\readme.md" Pack="true" PackagePath="" />
+	</ItemGroup>
+</Project>
