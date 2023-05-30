@@ -90,6 +90,19 @@ var list = dataTable.ToList<model>();
 
 "4!".Calculate(); //4!> 44
 "44%".Calculate(); //44%> 0.44
+
+//Custom function
+CalculateExtension.AddFunction("addOne", (double num) =>
+{
+    return ++num;
+});
+CalculateExtension.AddOperator('?', (double a, double b) =>
+{
+    return Random.Shared.Next((int)a, (int)b);
+},priority: 3);
+
+"addOne(1)> ".Log("addOne(1)".Calculate()); //addOne(1)> 2
+"1?100> ".Log("1?100".Calculate());
 ```
 
 ### Convert a number to words:
@@ -97,7 +110,10 @@ var list = dataTable.ToList<model>();
 1000.ToWords(); // "one thousand"
 
 //Set Language
-LanguageNumberWords.SetLanguageNumberWords(LanguageDefinition.VN);
+Console.OutputEncoding = Encoding.UTF8;
+
+StringExtension.SetLanguageToWords(LanguageDefinition.VN);
+
 1000.ToWords(); // "một nghìn"
 ```
 
@@ -136,4 +152,16 @@ var list = dataTable.ToList<model>();
 
 //Match column name
 var list2 = dataTable.ToList<model>(matchCase: true);
+
+//Convert with cache
+var list2 = dataTable.ToListCache<model>(matchCase: true);
+
+
+//Specify the column name other fields
+class TestTable{
+	[ColumnName("IDX")]
+	public string Id { get; set; } = "";
+	[ColumnName("FULLNAME")]
+	public string Name { get; set; } = "";
+}
 ```

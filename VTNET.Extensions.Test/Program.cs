@@ -1,14 +1,38 @@
-﻿using VTNET.Extensions;
+﻿using System.Data;
+using System.Text;
+using VTNET.Extensions;
 using VTNET.Extensions.Languages;
 
-LanguageNumberWords.SetLanguageNumberWords(LanguageDefinition.VN);
+var table = new DataTable();
+table.Columns.Add("a");
+table.Columns.Add("b");
+table.Columns.Add("Z");
+table.Rows.Add(new object[] { 1, 2, 3 });
+
+var listTable2 = table.ToList<TestTable>();
+
+Console.OutputEncoding = Encoding.UTF8;
+
+StringExtension.SetLanguageToWords(LanguageDefinition.VN);
 
 1000.ToWords().Log();
 
-"sin(30deg)".Log("sin(30deg)> ".Calculate());
-"tan(30deg)".Log("tan(30deg)> ".Calculate());
-"cos(30deg)".Log("cos(30deg)> ".Calculate());
-"log(30deg)".Log("log(30deg)> ".Calculate());
+CalculateExtension.AddFunction("addOne", (double num) =>
+{
+    return ++num;
+});
+CalculateExtension.AddOperator('?', (double a, double b) =>
+{
+    return Random.Shared.Next((int)a, (int)b);
+}, 3);
+
+"addOne(1)> ".Log("addOne(1)".Calculate());
+"1?100> ".Log("1?100".Calculate());
+
+"sin(30deg)> ".Log("sin(30deg)".Calculate());
+"tan(30deg)> ".Log("tan(30deg)".Calculate());
+"cos(30deg)> ".Log("cos(30deg)".Calculate());
+"log(30deg)> ".Log("log(30deg)".Calculate());
 
 var a = new Dictionary<string, string> { { "a", "1" } };
 var b = "1";
@@ -45,7 +69,17 @@ Guid.Empty.IsFalse().Log();
 "log(30)> ".Log("log(30)".Calculate());
 
 
+
+
 enum Test
 {
     a,b,c,d,e,f,g,h
+}
+
+class TestTable
+{
+    public int a { get; set; }
+    public int b { get; set; }
+    [ColumnName("Z")]
+    public int c { get; set; }
 }
