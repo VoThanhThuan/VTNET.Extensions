@@ -2,6 +2,7 @@
 using System.Text;
 using VTNET.Extensions;
 using VTNET.Extensions.Languages;
+using VTNET.Extensions.Model;
 
 var table = new DataTable();
 table.Columns.Add("a");
@@ -17,17 +18,28 @@ StringExtension.SetLanguageToWords(LanguageDefinition.VN);
 
 1000.ToWords().Log();
 
-CalculateExtension.AddFunction("addOne", (double num) =>
+CalculateExtension.AddSimpleFunction("addone", num =>
 {
     return ++num;
 });
-CalculateExtension.AddOperator('?', (double a, double b) =>
+
+CalculateExtension.AddFunction("sum", agrs =>
+{
+    return agrs.Sum();
+});
+
+CalculateExtension.AddOperator('?', (a, b) =>
 {
     return Random.Shared.Next((int)a, (int)b);
 }, 3);
 
-"addOne(1)> ".Log("addOne(1)".Calculate());
+CalculateExtension.AddOperator('#', Math.Max, 3);
+
+
+"addone(1)> ".Log("addone(1)".Calculate());
 "1?100> ".Log("1?100".Calculate());
+"sum(a,2,3,4,5,6)> ".Log("sum(a,2,3,4,5,6)".Calculate());
+"1#2#3#6#5#4> ".Log("1#2#3#6#5#4".Calculate());
 
 "sin(30deg)> ".Log("sin(30deg)".Calculate());
 "tan(30deg)> ".Log("tan(30deg)".Calculate());

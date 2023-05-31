@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using VTNET.Extensions.Model;
 
 namespace VTNET.Extensions
 {
@@ -18,11 +19,20 @@ namespace VTNET.Extensions
         static string _patternArg = $"(?<arg>{_patternNumber}+)";
         static string _variables = $"(?<var>pi|e)";
         static string _pattern = $"^{_patternFunction}\\({_patternArg}\\)|{_variables}";
-        static Dictionary<string, Func<double, double>> _FunctionExtensions = new Dictionary<string, Func<double, double>>();
+        static Dictionary<string, CalculateFuntionCustom> _FunctionExtensions = new Dictionary<string, CalculateFuntionCustom>();
         static Dictionary<string, Func<double, double, double>> _FunctionOperators = new Dictionary<string, Func<double, double, double>>();
-        public static void AddFunction(string functionName, Func<double, double> function)
+        public static void AddSimpleFunction(string functionName, Func<double, double> function)
         {
-            _FunctionExtensions.Add(functionName, function);
+            _FunctionExtensions.Add(functionName, new CalculateFuntionCustom(x => {
+                return function(x[0]);
+            }));
+        }
+        public static void AddFunction(string functionName, Func<double[], double> function, int parameterRequired = 0)
+        {
+            _FunctionExtensions.Add(functionName, new CalculateFuntionCustom(x =>
+            {
+                return function(x);
+            }, parameterRequired));
         }
         public static void RemoveFunction(string functionName)
         {
@@ -30,13 +40,30 @@ namespace VTNET.Extensions
         }
         public static void AddOperator(char functionName, Func<double, double, double> function, int priority = 1)
         {
-            _FunctionOperators.Add(functionName.ToString(), function);
-            _operatorPriorityPlus.Add(functionName.ToString(), priority);
+            var name = functionName.ToString();
+            _FunctionOperators.Add(name, function);
+            if (!_operatorPriority.ContainsKey(name))
+            {
+                _operatorPriorityPlus.Add(name, priority);
+                _operatorPriority.Add(name, priority);
+            }
         }
         public static void RemoveOperator(string functionName)
         {
             _FunctionOperators.Remove(functionName);
-            _operatorPriorityPlus.Remove(functionName);
+            if (_operatorPriorityPlus.ContainsKey(functionName))
+            {
+                _operatorPriorityPlus.Remove(functionName);
+                _operatorPriority.Remove(functionName);
+            }
+        }
+        public static string GetCustomFunction()
+        {
+            return string.Join(',', _FunctionExtensions);
+        }        
+        public static string GetCustomOperator()
+        {
+            return string.Join(',', _operatorPriorityPlus);
         }
         static double CalculateSimple(ref string strMath, ref Stack<double> values, ref Stack<string> operators)
         {
@@ -101,7 +128,7 @@ namespace VTNET.Extensions
                         break;
                     default:
                         {
-                            if (_operatorPriority.TryGetValue(op, out var value) || _operatorPriorityPlus.TryGetValue(op, out value))
+                            if (_operatorPriority.TryGetValue(op, out var value))
                             {
                                 if (!string.IsNullOrEmpty(stringValue))
                                 {
@@ -180,12 +207,12 @@ namespace VTNET.Extensions
 
                     var matchSI = Regex.Match(arg, _patternSI);
                     var functionValid = true;
-                    double value;
+                    double value = 0;
                     if (matchSI.Success)
                     {
                         functionValid = double.TryParse(matchSI.Groups[1].Value, out value);
-                    }
-                    else
+                    }                    
+                    else if (!_FunctionExtensions.ContainsKey(function))
                     {
                         var matchChild = Regex.Match(arg, _pattern);
                         if (matchChild.Success)
@@ -259,10 +286,10 @@ namespace VTNET.Extensions
                                 value = Math.E;
                                 break;
                             default:
-                                if (_FunctionExtensions.ContainsKey(function))
-                                {
-                                    value = _FunctionExtensions[function](value);
-                                }
+                                var valueArg = arg.Split(',')
+                                    .Select(item => double.TryParse(item, out var num) ? num : double.NaN)
+                                    .ToArray();
+                                value = _FunctionExtensions[function].Function(valueArg);
                                 break;
                         }
                         values.Push(value);

@@ -91,18 +91,30 @@ var list = dataTable.ToList<model>();
 "4!".Calculate(); //4!> 44
 "44%".Calculate(); //44%> 0.44
 
-//Custom function
-CalculateExtension.AddFunction("addOne", (double num) =>
+///Custom function
+//One parameter
+CalculateExtension.AddSimpleFunction("addone", num =>
 {
     return ++num;
 });
-CalculateExtension.AddOperator('?', (double a, double b) =>
+//Many parameter
+CalculateExtension.AddFunction("sum", agrs =>
+{
+    return agrs.Sum();
+});
+//Operator
+CalculateExtension.AddOperator('?', (a, b) =>
 {
     return Random.Shared.Next((int)a, (int)b);
-},priority: 3);
+}, 3);
 
-"addOne(1)> ".Log("addOne(1)".Calculate()); //addOne(1)> 2
+CalculateExtension.AddOperator('#', Math.Max, 3);
+
+
+"addone(1)> ".Log("addone(1)".Calculate()); //2
 "1?100> ".Log("1?100".Calculate());
+"sum(a,2,3,4,5,6)> ".Log("sum(a,2,3,4,5,6)".Calculate()); //21
+"1#2#3#6#5#4> ".Log("1#2#3#6#5#4".Calculate()); //6
 ```
 
 ### Convert a number to words:
