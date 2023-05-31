@@ -18,6 +18,12 @@ StringExtension.SetLanguageToWords(LanguageDefinition.VN);
 
 1000.ToWords().Log();
 
+CalculateExtension.AddOperator('s', (a, b) =>
+{
+    return Random.Shared.Next((int)a, (int)b);
+});
+"sin(30)+sin(60)".Calculate().Log();
+
 CalculateExtension.AddSimpleFunction("addone", num =>
 {
     return ++num;

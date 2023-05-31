@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -15,10 +16,11 @@ namespace VTNET.Extensions
         static string _patternSI = @"(\d+)\s*(rad|deg)";
         static string _patternNumber = @"(?:[^()]+|\((?:[^()]+|\([^()]\))\))";
         //static string _patternFunction = $"(?<function>{string.Join("|", _functions)})";
-        static string _patternFunction = $@"(?<function>[\w\W]+)";
+        static string _patternFunction = $@"(?<function>\w+)";
         static string _patternArg = $"(?<arg>{_patternNumber}+)";
         static string _variables = $"(?<var>pi|e)";
         static string _pattern = $"^{_patternFunction}\\({_patternArg}\\)|{_variables}";
+        static string _patterns = $"{_patternFunction}\\({_patternArg}\\)|{_variables}";
         static Dictionary<string, CalculateFuntionCustom> _FunctionExtensions = new Dictionary<string, CalculateFuntionCustom>();
         static Dictionary<string, Func<double, double, double>> _FunctionOperators = new Dictionary<string, Func<double, double, double>>();
         public static void AddSimpleFunction(string functionName, Func<double, double> function)
@@ -71,6 +73,9 @@ namespace VTNET.Extensions
             var isGroup = false;
             var result = 0.0d;
             var loop = true;
+            var loopCurrent = 0;
+            var checkFunction = Regex.Match(strMath, _patterns);
+            var loopMax = checkFunction.Index;
             // Operator
             while (!string.IsNullOrEmpty(strMath) && loop)
             {
@@ -159,7 +164,11 @@ namespace VTNET.Extensions
                         }
                         break;
                 }
-                //loop = calToEnd;
+
+                if(loopMax > 0 && ++loopCurrent >= loopMax)
+                {
+                    loop = false;
+                }
             }
             if (!string.IsNullOrEmpty(stringValue))
             {
@@ -302,7 +311,7 @@ namespace VTNET.Extensions
                     }
                 }
                 else
-                {
+                {                    
                     CalculateSimple(ref input, ref values, ref operators);
                 }
             }
