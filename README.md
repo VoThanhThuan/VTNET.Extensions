@@ -10,7 +10,7 @@ Library Name is a collection of utility methods for manipulating various data ty
 - Remove spaces from a string: `"a   b       c".RemoveDuplicateSpaces()`
 - Capitalize the first letter of each word in a string: `"vo thanh thuan".Capitalize()`
 - Convert a string to title case: `"vo thanh thuan".Title()`
-- Convert a string to title case: `"".Lorem()`
+- Convert a string to title case: `StringExtension.Lorem`
 - Convert DataTable to List: `var list = dataTable.ToList<model>()`
 - Support string methods: `IsNullOrEmpty(), IsNullOrWhiteSpace()`
 - Perform calculations on a string expression: `"1+1".Calculate()`
