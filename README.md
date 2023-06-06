@@ -31,21 +31,17 @@ Here is an example of how to use the library:
 ```csharp
 using VTNET.Extensions;
 
-string str = "";
-bool isEmpty = str.IsNullOrEmpty(); //true
+string expression = "1+1";
+int result = expression.Calculate(); // 2
 
-string str = " ";
-bool isEmpty = str.IsNullOrWhiteSpace(); //true
+"Hello".Log(); //like Console.WriteLine("Hello");
 
-string number = "1000";
-bool isNumber = number.IsNumber(); // true
+//Convert DataTable to List
+var list = dataTable.ToList<model>();
+```
 
-int num = 69;
-bool isEven = num.IsEven(); // false
-
-int num2 = 96;
-bool isOdd = num2.IsOdd(); // true
-
+### String
+```csharp
 string number2 = "1000";
 string words = number2.ToWords(); // "one thousand"
 
@@ -61,17 +57,32 @@ string capitalized = name.Capitalize(); // "Vo thanh thuan"
 string title = "vo thanh thuan";
 string titleCase = title.Title(); // "Vo Thanh Thuan"
 
-string expression = "1+1";
-int result = expression.Calculate(); // 2
-
-string titleCase = "".Lorem(); // "lorem ipsum dolor sit"
-
-"Hello".Log(); //like Console.WriteLine("Hello");
+string reverseString = "Thuaanj".ReverseString(); // "jnaauhT"
 
 ",".Join(listValue); //like string.Join(",", listValue);
 
-//Convert DataTable to List
-var list = dataTable.ToList<model>();
+string lorem = StringExtension.Lorem; // "lorem ipsum dolor sit"
+string lorem = StringExtension.LoremShort; // "lorem ipsum dolor sit"
+string lorem = StringExtension.LoremLong; // "lorem ipsum dolor sit..."
+string lorem = StringExtension.LoremIpsum(minWords: 4, maxWords: 64, minSentences: 1, maxSentences: 4, numParagraphs: 4); // "lorem ipsum dolor sit..."
+```
+
+### Boolean
+```csharp
+string str = "";
+bool isEmpty = str.IsNullOrEmpty(); //true
+
+string str = " ";
+bool isEmpty = str.IsNullOrWhiteSpace(); //true
+
+int num = 69;
+bool isEven = num.IsEven(); // false
+
+int num2 = 96;
+bool isOdd = num2.IsOdd(); // true
+
+BooleanExtension.IsNumericString("-3.14").Log(); //true
+BooleanExtension.IsNumericString("1,000,000.34", ',').Log(); //true
 
 ```
 

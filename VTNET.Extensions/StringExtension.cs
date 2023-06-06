@@ -11,6 +11,11 @@ namespace VTNET.Extensions
 {
     public static class StringExtension
     {
+
+        public static string Lorem { get => LoremIpsum();}
+        public static string LoremShort { get => LoremIpsum(4, 16, 0, 1, 1);}
+        public static string LoremLong { get => LoremIpsum(4, 64, 1, 4, 4);}
+
         /// <summary>
         /// Chuyển chữ tiếng việt có dấu thành không dấu
         /// </summary>
@@ -247,14 +252,22 @@ namespace VTNET.Extensions
         /// <param name="maxSentences">Maximum number of sentences</param>
         /// <param name="numParagraphs"></param>
         /// <returns></returns>
-        public static string Lorem(this string text, int minWords = 4, int maxWords = 20, int minSentences = 0, int maxSentences = 1, int numParagraphs = 1)
+        public static string LoremIpsum(int minWords = 4, int maxWords = 16, int minSentences = 1, int maxSentences = 2, int numParagraphs = 4)
         {
-            if (!string.IsNullOrEmpty(text)) return text;
-
-            var words = new[]{"lorem", "ipsum", "dolor", "sit", "amet", "consectetuer",
-            "adipiscing", "elit", "sed", "diam", "nonummy", "nibh", "euismod",
-            "tincidunt", "ut", "laoreet", "dolore", "magna", "aliquam", "erat",
-            "amet", "do", "tempor", "incididunt", "labore", "et", "magna", "aliqua", "vothuan"};
+            var words = new[] { "lorem", "ipsum", "dolor", "sit", "amet", 
+                "consectetur", "adipisci", "elit", "sed", "diam", 
+                "nonummy", "nibh", "euismod", "tincidunt", "ut", 
+                "laoreet", "dolore", "ut", "enim", "ad", 
+                "minim", "veniam", "quis", "nostrum", "exercitationem", 
+                "ullam", "corporis", "suscipit", "laboriosam,", "nisi", 
+                "ut", "aliquid", "ex", "ea", "commodi", 
+                "consequatur", "quis", "aute", "iure", "reprehenderit", 
+                "in", "voluptate", "velit", "esse", "cillum", 
+                "dolore", "eu", "fugiat", "nulla", "pariatur", 
+                "excepteur", "sint", "obcaecat", "cupiditat", 
+                "non", "proident", "sunt", "in", "culpa", 
+                "qui", "officia", "deserunt", "mollit", "anim", 
+                "id", "est", "laborum", "vothuan" };
 
             if (minSentences > maxSentences)
             {
@@ -269,8 +282,7 @@ namespace VTNET.Extensions
                 numParagraphs = 1;
             }
             var rand = new Random(Guid.NewGuid().GetHashCode());
-            var numSentences = rand.Next(maxSentences - minSentences)
-                + minSentences + 1;
+            var numSentences = rand.Next(maxSentences - minSentences) + minSentences + 1;
 
             var result = new List<string>() {
                 "Lorem ",
@@ -306,5 +318,16 @@ namespace VTNET.Extensions
             return "".Join(result);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string ReverseString(this string input)
+        {
+            char[] charArray = input.ToCharArray();
+            Array.Reverse(charArray);
+            return new string(charArray);
+        }
     }
 }

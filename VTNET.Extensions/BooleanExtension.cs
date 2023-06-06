@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace VTNET.Extensions
 {
@@ -12,22 +13,13 @@ namespace VTNET.Extensions
         /// </summary>
         /// <param name="variable"></param>
         /// <returns></returns>
-        public static bool IsNumber(this object variable)
+        public static bool IsNumberType(object variable)
         {
             return variable is sbyte || variable is byte ||
                variable is short || variable is ushort ||
                variable is int || variable is uint ||
                variable is long || variable is ulong ||
                variable is float || variable is double || variable is decimal;
-        }
-        /// <summary>
-        /// Check if string is numeric?
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        public static bool IsNumericString(this string str)
-        {
-            return double.TryParse(str, out var _);
         }
 
         /// <summary>
@@ -57,7 +49,7 @@ namespace VTNET.Extensions
                     return !string.IsNullOrWhiteSpace(str);
                 }
             }
-            else if (value.IsNumber())
+            else if (IsNumberType(value))
             {
                 var number = Convert.ToDouble(value);
                 if (number < 1)
@@ -125,7 +117,7 @@ namespace VTNET.Extensions
         /// <exception cref="InvalidOperationException"></exception>
         public static bool IsEven(this object? number)
         {
-            if (number?.IsNumber() == true)
+            if (number != null && IsNumberType(number))
             {
                 var numericValue = Convert.ToInt64(number);
                 return numericValue % 2 == 0;
@@ -141,6 +133,29 @@ namespace VTNET.Extensions
         public static bool IsOdd(this object? number)
         {
             return !number.IsEven();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static bool IsNumericString(this string? input, char? thousandSeparator = null, char? decimalDigits = null)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return false;
+            }
+            if (thousandSeparator != null)
+            {
+                input = input.Replace(thousandSeparator.ToString(), "");
+            }
+            if(decimalDigits != null)
+            {
+                input = input.Replace(decimalDigits.ToString(), ".");
+            }
+            string pattern = @"^-?\d*\.?\d+$";
+            return Regex.IsMatch(input, pattern);
         }
     }
 }

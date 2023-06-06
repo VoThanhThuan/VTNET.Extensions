@@ -111,6 +111,7 @@ namespace VTNET.Extensions
                                 }
                                 value = fact;
                                 values.Push(value);
+                                stringValue = "";
                             }
                             else
                             {
@@ -124,6 +125,7 @@ namespace VTNET.Extensions
                             {
                                 value /= 100;
                                 values.Push(value);
+                                stringValue = "";
                             }
                             else
                             {
