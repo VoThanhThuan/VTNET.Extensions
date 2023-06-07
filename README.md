@@ -30,14 +30,7 @@ Here is an example of how to use the library:
 
 ```csharp
 using VTNET.Extensions;
-
-string expression = "1+1";
-int result = expression.Calculate(); // 2
-
-"Hello".Log(); //like Console.WriteLine("Hello");
-
-//Convert DataTable to List
-var list = dataTable.ToList<model>();
+"Hello".Log(); //Hello
 ```
 
 ### String
@@ -61,29 +54,36 @@ string reverseString = "Thuaanj".ReverseString(); // "jnaauhT"
 
 ",".Join(listValue); //like string.Join(",", listValue);
 
+StringExtension.IsNumericString("-3.14").Log(); //true
+StringExtension.IsNumericString("1,000,000.34", ',').Log(); //true
+
 string lorem = StringExtension.Lorem; // "lorem ipsum dolor sit"
 string lorem = StringExtension.LoremShort; // "lorem ipsum dolor sit"
 string lorem = StringExtension.LoremLong; // "lorem ipsum dolor sit..."
 string lorem = StringExtension.LoremIpsum(minWords: 4, maxWords: 64, minSentences: 1, maxSentences: 4, numParagraphs: 4); // "lorem ipsum dolor sit..."
+
+//Convert a number to words:
+1000.ToWords(); // "one thousand"
+
+//Set Language
+Console.OutputEncoding = Encoding.UTF8;
+
+StringExtension.SetLanguageToWords(LanguageDefinition.VN);
+
+1000.ToWords(); // "một nghìn"
 ```
 
-### Boolean
+### Number
 ```csharp
-string str = "";
-bool isEmpty = str.IsNullOrEmpty(); //true
-
-string str = " ";
-bool isEmpty = str.IsNullOrWhiteSpace(); //true
-
 int num = 69;
 bool isEven = num.IsEven(); // false
 
 int num2 = 96;
 bool isOdd = num2.IsOdd(); // true
 
-BooleanExtension.IsNumericString("-3.14").Log(); //true
-BooleanExtension.IsNumericString("1,000,000.34", ',').Log(); //true
-
+"69".ParseInt();
+"6.9".ParseFloat();
+"3.14".ParseDouble();
 ```
 
 ### Calculate
@@ -128,23 +128,34 @@ CalculateExtension.AddOperator('#', Math.Max, 3);
 "1#2#3#6#5#4> ".Log("1#2#3#6#5#4".Calculate()); //6
 ```
 
-### Convert a number to words:
+### DataTable To List
 ```csharp
-1000.ToWords(); // "one thousand"
+var list = dataTable.ToList<model>();
 
-//Set Language
-Console.OutputEncoding = Encoding.UTF8;
+//Match column name
+var list2 = dataTable.ToList<model>(matchCase: true);
 
-StringExtension.SetLanguageToWords(LanguageDefinition.VN);
+//Convert with cache
+var list2 = dataTable.ToListCache<model>(matchCase: true);
 
-1000.ToWords(); // "một nghìn"
+
+//Specify the column name other fields
+class TestTable{
+	[ColumnName("IDX")]
+	public string Id { get; set; } = "";
+	[ColumnName("FULLNAME")]
+	public string Name { get; set; } = "";
+}
 ```
 
+### Boolean
 ```csharp
-```
+string str = "";
+bool isEmpty = str.IsNullOrEmpty(); //true
 
-### Check True, False
-```csharp
+string str = " ";
+bool isEmpty = str.IsNullOrWhiteSpace(); //true
+
 enum Test{a,b,c,d,e,f,g,h}
 var a = new Dictionary<string, string>{ { "a", "1"} };
 var b = "1";
@@ -167,24 +178,4 @@ var f = Test.b;
 "d> ".Log(d.IsFalse()); //d> false
 "e> ".Log(e.IsFalse()); //e> true
 "f> ".Log(f.IsFalse()); //f> false
-```
-
-### DataTable To List
-```csharp
-var list = dataTable.ToList<model>();
-
-//Match column name
-var list2 = dataTable.ToList<model>(matchCase: true);
-
-//Convert with cache
-var list2 = dataTable.ToListCache<model>(matchCase: true);
-
-
-//Specify the column name other fields
-class TestTable{
-	[ColumnName("IDX")]
-	public string Id { get; set; } = "";
-	[ColumnName("FULLNAME")]
-	public string Name { get; set; } = "";
-}
 ```

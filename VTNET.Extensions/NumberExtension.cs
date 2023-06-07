@@ -11,6 +11,45 @@ namespace VTNET.Extensions
     public static class NumberExtension
     {
         /// <summary>
+        /// Check if object is numeric?
+        /// </summary>
+        /// <param name="variable"></param>
+        /// <returns></returns>
+        public static bool IsNumberType(object variable)
+        {
+            return variable is sbyte || variable is byte ||
+               variable is short || variable is ushort ||
+               variable is int || variable is uint ||
+               variable is long || variable is ulong ||
+               variable is float || variable is double || variable is decimal;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public static bool IsEven(this object? number)
+        {
+            if (number != null && IsNumberType(number))
+            {
+                var numericValue = Convert.ToInt64(number);
+                return numericValue % 2 == 0;
+            }
+
+            throw new InvalidOperationException($"Number of type '{number?.GetType()}' is not supported.");
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public static bool IsOdd(this object? number)
+        {
+            return !number.IsEven();
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="value"></param>
@@ -29,7 +68,7 @@ namespace VTNET.Extensions
             _ = double.TryParse(value, out var result);
             return (int)result;
         }
-        public static float FloatDouble(this string value)
+        public static float ParseFloat(this string value)
         {
             return float.TryParse(value, out var result) ? result : float.NaN;
         }

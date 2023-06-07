@@ -9,20 +9,6 @@ namespace VTNET.Extensions
     public static class BooleanExtension
     {
         /// <summary>
-        /// Check if object is numeric?
-        /// </summary>
-        /// <param name="variable"></param>
-        /// <returns></returns>
-        public static bool IsNumberType(object variable)
-        {
-            return variable is sbyte || variable is byte ||
-               variable is short || variable is ushort ||
-               variable is int || variable is uint ||
-               variable is long || variable is ulong ||
-               variable is float || variable is double || variable is decimal;
-        }
-
-        /// <summary>
         /// True if value is greater than zero and non-empty
         /// </summary>
         /// <param name="value"></param>
@@ -49,7 +35,7 @@ namespace VTNET.Extensions
                     return !string.IsNullOrWhiteSpace(str);
                 }
             }
-            else if (IsNumberType(value))
+            else if (NumberExtension.IsNumberType(value))
             {
                 var number = Convert.ToDouble(value);
                 if (number < 1)
@@ -88,74 +74,6 @@ namespace VTNET.Extensions
         public static bool IsFalse(this object? value)
         {
             return !IsTrue(value);
-        }
-        /// <summary>
-        /// Similar <see cref="string.IsNullOrEmpty(string?)"/>
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public static bool IsNullOrEmpty(this string? text)
-        {
-            return string.IsNullOrEmpty(text);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public static bool IsNullOrWhiteSpace(this string? text)
-        {
-            return string.IsNullOrWhiteSpace(text);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        public static bool IsEven(this object? number)
-        {
-            if (number != null && IsNumberType(number))
-            {
-                var numericValue = Convert.ToInt64(number);
-                return numericValue % 2 == 0;
-            }
-
-            throw new InvalidOperationException($"Number of type '{number?.GetType()}' is not supported.");
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        public static bool IsOdd(this object? number)
-        {
-            return !number.IsEven();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        public static bool IsNumericString(this string? input, char? thousandSeparator = null, char? decimalDigits = null)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                return false;
-            }
-            if (thousandSeparator != null)
-            {
-                input = input.Replace(thousandSeparator.ToString(), "");
-            }
-            if(decimalDigits != null)
-            {
-                input = input.Replace(decimalDigits.ToString(), ".");
-            }
-            string pattern = @"^-?\d*\.?\d+$";
-            return Regex.IsMatch(input, pattern);
         }
     }
 }

@@ -17,6 +17,48 @@ namespace VTNET.Extensions
         public static string LoremLong { get => LoremIpsum(4, 64, 1, 4, 4);}
 
         /// <summary>
+        /// Similar <see cref="string.IsNullOrEmpty(string?)"/>
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static bool IsNullOrEmpty(this string? text)
+        {
+            return string.IsNullOrEmpty(text);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static bool IsNullOrWhiteSpace(this string? text)
+        {
+            return string.IsNullOrWhiteSpace(text);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static bool IsNumericString(this string? input, char? thousandSeparator = null, char? decimalDigits = null)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return false;
+            }
+            if (thousandSeparator != null)
+            {
+                input = input.Replace(thousandSeparator.ToString(), "");
+            }
+            if (decimalDigits != null)
+            {
+                input = input.Replace(decimalDigits.ToString(), ".");
+            }
+            string pattern = @"^-?\d*\.?\d+$";
+            return Regex.IsMatch(input, pattern);
+        }
+
+        /// <summary>
         /// Chuyển chữ tiếng việt có dấu thành không dấu
         /// </summary>
         /// <returns>Tiếng việt không dấu và được xóa bỏ những khoảng trắng thừa</returns>
