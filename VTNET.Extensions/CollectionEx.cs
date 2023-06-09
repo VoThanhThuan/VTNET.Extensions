@@ -4,7 +4,7 @@ using System.Text;
 
 namespace VTNET.Extensions
 {
-    public static class CollectionExtension
+    public static class CollectionEx
     {
         /// <summary>
         /// <para>Will rely on "separation condition" to group from "first element that meets the condition" to "the next element that meets the condition"</para>

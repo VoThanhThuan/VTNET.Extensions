@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace VTNET.Extensions
 {
-    public static class DatatableExtension
+    public static class DatatableEx
     {
         public static List<T> ToList<T>(this DataTable table, bool matchCase = false) where T : new()
         {

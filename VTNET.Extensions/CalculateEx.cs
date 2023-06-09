@@ -8,7 +8,7 @@ using VTNET.Extensions.Model;
 
 namespace VTNET.Extensions
 {
-    public static class CalculateExtension
+    public static class CalculateEx
     {
         static HashSet<string> _functions = new HashSet<string> { "log", "log10", "sin", "cos", "tan", "sqrt", "abs", "%", "!" };
         static Dictionary<string, int> _operatorPriority = new Dictionary<string, int> { { "^", 3 }, { "*", 2 }, { "/", 2 }, { "+", 1 }, { "-", 1 } };

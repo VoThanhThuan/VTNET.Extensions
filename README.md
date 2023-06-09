@@ -54,13 +54,13 @@ string reverseString = "Thuaanj".ReverseString(); // "jnaauhT"
 
 ",".Join(listValue); //like string.Join(",", listValue);
 
-StringExtension.IsNumericString("-3.14").Log(); //true
-StringExtension.IsNumericString("1,000,000.34", ',').Log(); //true
+StringEx.IsNumericString("-3.14").Log(); //true
+StringEx.IsNumericString("1,000,000.34", ',').Log(); //true
 
-string lorem = StringExtension.Lorem; // "lorem ipsum dolor sit"
-string lorem = StringExtension.LoremShort; // "lorem ipsum dolor sit"
-string lorem = StringExtension.LoremLong; // "lorem ipsum dolor sit..."
-string lorem = StringExtension.LoremIpsum(minWords: 4, maxWords: 64, minSentences: 1, maxSentences: 4, numParagraphs: 4); // "lorem ipsum dolor sit..."
+string lorem = StringEx.Lorem; // "lorem ipsum dolor sit"
+string lorem = StringEx.LoremShort; // "lorem ipsum dolor sit"
+string lorem = StringEx.LoremLong; // "lorem ipsum dolor sit..."
+string lorem = StringEx.LoremIpsum(minWords: 4, maxWords: 64, minSentences: 1, maxSentences: 4, numParagraphs: 4); // "lorem ipsum dolor sit..."
 
 //Convert a number to words:
 1000.ToWords(); // "one thousand"
@@ -71,6 +71,13 @@ Console.OutputEncoding = Encoding.UTF8;
 StringExtension.SetLanguageToWords(LanguageDefinition.VN);
 
 1000.ToWords(); // "một nghìn"
+
+"abc".Contains(x => x.TextOnly).Log(); //true
+"123abc".Contains(x => x.TextOnly).Log(); //false
+"abc".Contains(x => x.Number).Log(); //false
+"123abc".Contains(x => x.NumberOnly).Log(); //false
+"123abc".Contains(x => x.Number).Log(); //true
+
 ```
 
 ### Number
@@ -104,22 +111,22 @@ bool isOdd = num2.IsOdd(); // true
 
 ///Custom function
 //One parameter
-CalculateExtension.AddSimpleFunction("addone", num =>
+CalculateEx.AddSimpleFunction("addone", num =>
 {
     return ++num;
 });
 //Many parameter
-CalculateExtension.AddFunction("sum", agrs =>
+CalculateEx.AddFunction("sum", agrs =>
 {
     return agrs.Sum();
 });
 //Operator
-CalculateExtension.AddOperator('?', (a, b) =>
+CalculateEx.AddOperator('?', (a, b) =>
 {
     return Random.Shared.Next((int)a, (int)b);
 }, 3);
 
-CalculateExtension.AddOperator('#', Math.Max, 3);
+CalculateEx.AddOperator('#', Math.Max, 3);
 
 
 "addone(1)> ".Log("addone(1)".Calculate()); //2
@@ -146,36 +153,4 @@ class TestTable{
 	[ColumnName("FULLNAME")]
 	public string Name { get; set; } = "";
 }
-```
-
-### Boolean
-```csharp
-string str = "";
-bool isEmpty = str.IsNullOrEmpty(); //true
-
-string str = " ";
-bool isEmpty = str.IsNullOrWhiteSpace(); //true
-
-enum Test{a,b,c,d,e,f,g,h}
-var a = new Dictionary<string, string>{ { "a", "1"} };
-var b = "1";
-var c = new List<string>();
-var d = new string[]{"1", "2"};
-var e = Test.a;
-var f = Test.b;
-">> IsTrue:".Log();
-"a> ".Log(a.IsTrue()); //true
-"b> ".Log(b.IsTrue()); //true
-"c> ".Log(c.IsTrue()); //false
-"d> ".Log(d.IsTrue()); //true
-"e> ".Log(e.IsTrue()); //false
-"f> ".Log(f.IsTrue()); //true
-"--------------------".Log();
-">> IsFalse:".Log();
-"a> ".Log(a.IsFalse()); //a> false
-"b> ".Log(b.IsFalse()); //b> false
-"c> ".Log(c.IsFalse()); //c> true
-"d> ".Log(d.IsFalse()); //d> false
-"e> ".Log(e.IsFalse()); //e> true
-"f> ".Log(f.IsFalse()); //f> false
 ```

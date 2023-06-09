@@ -5,16 +5,30 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using VTNET.Extensions.EnumDefinition;
 using VTNET.Extensions.Languages;
+using VTNET.Extensions.Model;
 
 namespace VTNET.Extensions
 {
-    public static class StringExtension
+    public static class StringEx
     {
 
         public static string Lorem { get => LoremIpsum();}
         public static string LoremShort { get => LoremIpsum(4, 16, 0, 1, 1);}
         public static string LoremLong { get => LoremIpsum(4, 64, 1, 4, 4);}
+
+        public static bool Contains(this string? text, Func<OptionsContains, bool> options)
+        {
+            if (text == null)
+            {
+                throw new ArgumentNullException(nameof(text));
+            }
+
+            var optionsContains = new OptionsContains(text);
+
+            return options(optionsContains);
+        }
 
         /// <summary>
         /// Similar <see cref="string.IsNullOrEmpty(string?)"/>

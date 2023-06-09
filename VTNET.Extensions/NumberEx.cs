@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace VTNET.Extensions
 {
-    public static class NumberExtension
+    public static class NumberEx
     {
         /// <summary>
         /// Check if object is numeric?
@@ -23,13 +23,8 @@ namespace VTNET.Extensions
                variable is long || variable is ulong ||
                variable is float || variable is double || variable is decimal;
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        public static bool IsEven(this object? number)
+
+        public static bool IsEven(object? number)
         {
             if (number != null && IsNumberType(number))
             {
@@ -39,16 +34,45 @@ namespace VTNET.Extensions
 
             throw new InvalidOperationException($"Number of type '{number?.GetType()}' is not supported.");
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        public static bool IsOdd(this object? number)
+
+        public static bool IsOdd(object? number)
+        {
+            return !IsEven(number);
+        }
+
+        public static bool IsEven(this int number)
+        {
+            return number % 2 == 0;
+        } 
+        public static bool IsEven(this long number)
+        {
+            return number % 2 == 0;
+        }
+        public static bool IsEven(this float number)
+        {
+            return number % 2 == 0;
+        }
+        public static bool IsEven(this double number)
+        {
+            return number % 2 == 0;
+        }        
+        
+        public static bool IsOdd(this int number)
         {
             return !number.IsEven();
         }
-
+        public static bool IsOdd(this long number)
+        {
+            return !number.IsEven();
+        }
+        public static bool IsOdd(this float number)
+        {
+            return !number.IsEven();
+        }
+        public static bool IsOdd(this double number)
+        {
+            return !number.IsEven();
+        }
         /// <summary>
         /// 
         /// </summary>

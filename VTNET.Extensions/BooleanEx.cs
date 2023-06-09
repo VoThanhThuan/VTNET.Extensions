@@ -6,14 +6,14 @@ using System.Text.RegularExpressions;
 
 namespace VTNET.Extensions
 {
-    public static class BooleanExtension
+    public static class BooleanEx
     {
         /// <summary>
         /// True if value is greater than zero and non-empty
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static bool IsTrue(this object? value)
+        public static bool IsTrue(object? value)
         {
             if (value is null)
             {
@@ -35,7 +35,7 @@ namespace VTNET.Extensions
                     return !string.IsNullOrWhiteSpace(str);
                 }
             }
-            else if (NumberExtension.IsNumberType(value))
+            else if (NumberEx.IsNumberType(value))
             {
                 var number = Convert.ToDouble(value);
                 if (number < 1)
@@ -71,7 +71,7 @@ namespace VTNET.Extensions
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static bool IsFalse(this object? value)
+        public static bool IsFalse(object? value)
         {
             return !IsTrue(value);
         }
