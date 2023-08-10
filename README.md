@@ -68,7 +68,7 @@ string lorem = StringEx.LoremIpsum(minWords: 4, maxWords: 64, minSentences: 1, m
 //Set Language
 Console.OutputEncoding = Encoding.UTF8;
 
-StringEx.SetLanguageToWords(LanguageDefinition.VN);
+StringEx.SetLanguageToWords(LangWords.VN);
 
 1000.ToWords(); // "một nghìn"
 
