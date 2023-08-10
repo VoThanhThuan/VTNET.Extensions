@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using VTNET.Extensions.Languages;
 using VTNET.Extensions.Model;
+using VTNET.Extensions.SupportFunctions;
 
 namespace VTNET.Extensions
 {
@@ -155,207 +156,46 @@ namespace VTNET.Extensions
             return Separator(double.Parse(s), separator, decimalPoint, digits);
         }
 
-        public static void SetLanguageToWords(LangWords lang)
+        public static void SetLanguageToWords(LangWords lang, string floatPoint = "")
         {
             LanguageNumberWords.Language = lang;
-        }
-
-        public static string NumberToEnglishText(double inputNumber, bool includeCents = true)
-        {
-            string[] unitNumbers = new string[] { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
-            string[] tensNumbers = new string[] { "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety" };
-            string[] teensNumbers = new string[] { "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen" };
-            string[] placeValues = new string[] { "", "thousand", "million", "billion", "trillion" };
-            bool isNegative = false;
-
-            if (inputNumber < 0)
-            {
-                isNegative = true;
-                inputNumber = Math.Abs(inputNumber);
-            }
-
-            long integerPart = (long)inputNumber;
-            int decimalPart = (int)Math.Round((inputNumber - integerPart) * 100); // Lấy tối đa hai chữ số phần thập phân
-
-            string result = "";
-
-            if (integerPart == 0)
-            {
-                result = unitNumbers[0];
-            }
-            else
-            {
-                int placeValue = 0;
-
-                while (integerPart > 0)
-                {
-                    int chunk = (int)(integerPart % 1000);
-                    if (chunk > 0)
-                    {
-                        if (result != "")
-                        {
-                            result = " " + result; // Thêm khoảng trắng giữa các từ
-                        }
-                        result = ConvertChunkToWords(chunk, unitNumbers, tensNumbers, teensNumbers) + " " + placeValues[placeValue] + result;
-                    }
-                    integerPart /= 1000;
-                    placeValue++;
-                }
-            }
-
-            if (isNegative)
-            {
-                result = "negative " + result;
-            }
-
-            if (decimalPart > 0 && includeCents)
-            {
-                result += "and " + ConvertChunkToWords(decimalPart, unitNumbers, tensNumbers, teensNumbers) + " cents";
-            }
-
-            return result;
-        }
-
-        private static string ConvertChunkToWords(int chunk, string[] unitNumbers, string[] tensNumbers, string[] teensNumbers)
-        {
-            string chunkText = "";
-
-            int hundreds = chunk / 100;
-            int tens = (chunk % 100) / 10;
-            int ones = chunk % 10;
-
-            if (hundreds > 0)
-            {
-                chunkText += unitNumbers[hundreds] + " hundred";
-                if (tens > 0 || ones > 0)
-                {
-                    chunkText += " and ";
-                }
-            }
-
-            if (tens == 1)
-            {
-                chunkText += teensNumbers[ones];
-            }
-            else if (tens > 1)
-            {
-                chunkText += tensNumbers[tens - 2];
-                if (ones > 0)
-                {
-                    chunkText += "-" + unitNumbers[ones];
-                }
-            }
-            else if (ones > 0)
-            {
-                chunkText += unitNumbers[ones];
-            }
-
-            return chunkText;
-        }
-
-
-        /// <summary>
-        /// Thousand separator for numbers
-        /// </summary>
-        public static string ToWords(this int number)
-        {
-            return ToWords(number, true, LangWords.DEFAULT);
+            LanguageNumberWords.SetFloatPoint(lang, floatPoint);
         }
 
         /// <summary>
         /// Thousand separator for numbers
         /// </summary>
-        public static string ToWords(this double inputNumber, bool suffix = true, LangWords lang = LangWords.DEFAULT)
+        /// <param name="number"></param>
+        /// <param name="lang"></param>
+        /// <returns></returns>
+        public static string ToWords(this int number, LangWords lang = LangWords.DEFAULT)
+        {
+            return ToWords(number, lang);
+        }
+        /// <summary>
+        /// Thousand separator for numbers
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="lang"></param>
+        /// <returns></returns>
+        public static string ToWords(this double number, LangWords lang = LangWords.DEFAULT)
+        {
+            return ToWords((decimal)number, lang);
+        }
+
+        /// <summary>
+        /// Thousand separator for numbers
+        /// </summary>
+        public static string ToWords(this decimal inputNumber, LangWords lang = LangWords.DEFAULT)
         {
             if((lang == LangWords.DEFAULT && LanguageNumberWords.Language == LangWords.EN) || lang == LangWords.EN)
             {
-                return NumberToEnglishText(inputNumber);
+                return NumberWordsConverter.ToWordsEnglish(inputNumber);
             }
 
-            string[] unitNumbers = new string[] { "không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín" };
-            string[] placeValues = new string[] { "", "nghìn", "triệu", "tỷ" };
-            bool isNegative = false;
+            var result = NumberWordsConverter.ToWordsVietnamese(inputNumber);
 
-            // -12345678.3445435 => "-12345678"
-            string sNumber = inputNumber.ToString("#");
-            double number = Convert.ToDouble(sNumber);
-            if (number < 0)
-            {
-                number = -number;
-                sNumber = number.ToString();
-                isNegative = true;
-            }
-
-
-            int ones, tens, hundreds;
-
-            int positionDigit = sNumber.Length;   // last -> first
-
-            string result = " ";
-
-
-            if (positionDigit == 0)
-                result = unitNumbers[0] + result;
-            else
-            {
-                // 0:       ###
-                // 1: nghìn ###,###
-                // 2: triệu ###,###,###
-                // 3: tỷ    ###,###,###,###
-                int placeValue = 0;
-
-                while (positionDigit > 0)
-                {
-                    // Check last 3 digits remain ### (hundreds tens ones)
-                    tens = hundreds = -1;
-                    ones = Convert.ToInt32(sNumber.Substring(positionDigit - 1, 1));
-                    positionDigit--;
-                    if (positionDigit > 0)
-                    {
-                        tens = Convert.ToInt32(sNumber.Substring(positionDigit - 1, 1));
-                        positionDigit--;
-                        if (positionDigit > 0)
-                        {
-                            hundreds = Convert.ToInt32(sNumber.Substring(positionDigit - 1, 1));
-                            positionDigit--;
-                        }
-                    }
-
-                    if ((ones > 0) || (tens > 0) || (hundreds > 0) || (placeValue == 3))
-                        result = placeValues[placeValue] + result;
-
-                    placeValue++;
-                    if (placeValue > 3) placeValue = 1;
-
-                    if ((ones == 1) && (tens > 1))
-                        result = "một " + result;
-                    else
-                    {
-                        if ((ones == 5) && (tens > 0))
-                            result = "lăm " + result;
-                        else if (ones > 0)
-                            result = unitNumbers[ones] + " " + result;
-                    }
-                    if (tens < 0)
-                        break;
-                    else
-                    {
-                        if ((tens == 0) && (ones > 0)) result = "lẻ " + result;
-                        if (tens == 1) result = "mười " + result;
-                        if (tens > 1) result = unitNumbers[tens] + " mươi " + result;
-                    }
-                    if (hundreds < 0) break;
-                    else
-                    {
-                        if ((hundreds > 0) || (tens > 0) || (ones > 0))
-                            result = unitNumbers[hundreds] + " trăm " + result;
-                    }
-                    result = " " + result;
-                }
-            }
-            result = result.Trim();
-            if (isNegative) result = "Âm " + result;
-            return result + (suffix ? " đồng" : "");
+            return result;
         }
 
         /// <summary>

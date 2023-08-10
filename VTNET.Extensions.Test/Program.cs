@@ -5,14 +5,16 @@ using VTNET.Extensions.Languages;
 
 
 Console.OutputEncoding = Encoding.UTF8;
-//StringEx.SetLanguageToWords(LangWords.EN);
+StringEx.SetLanguageToWords(LangWords.VN);
 while (true)
 {
     Console.WriteLine("Nhập số tiền: ");
     var amount = double.Parse(Console.ReadLine());
 
     string amountInWords = amount.ToWords();
-    Console.WriteLine("Số tiền bằng chữ: " + amountInWords);
+    string amountInWordsEN = amount.ToWords(LangWords.EN);
+    Console.WriteLine("Số tiền bằng chữ (tiếng việt): " + amountInWords);
+    Console.WriteLine("Số tiền bằng chữ (tiếng anh): " + amountInWordsEN);
 }
 
 //var list = new List<int>() { 
