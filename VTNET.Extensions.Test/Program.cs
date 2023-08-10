@@ -3,12 +3,32 @@ using System.Text;
 using VTNET.Extensions;
 using VTNET.Extensions.Languages;
 
-var a = "abc".Contains(x => x.TextOnly);
-var b = "123abc".Contains(x => x.TextOnly);
-var c = "abc".Contains(x => x.Number);
-var d = "123abc".Contains(x => x.NumberOnly);
-var e = "123abc".Contains(x => x.Number);
-"".Log(a);
+
+Console.OutputEncoding = Encoding.UTF8;
+//StringEx.SetLanguageToWords(LangWords.EN);
+while (true)
+{
+    Console.WriteLine("Nhập số tiền: ");
+    var amount = double.Parse(Console.ReadLine());
+
+    string amountInWords = amount.ToWords();
+    Console.WriteLine("Số tiền bằng chữ: " + amountInWords);
+}
+
+//var list = new List<int>() { 
+//    1, 2, 2, 2,
+//    1, 3, 3, 3, 3,
+//    1, 4, 4, 4, 4,
+//    1, 5, 5, 5, 5
+//};
+//var b = list.Split(1);
+//b.Log();
+//1000.Separator();
+//var a = "abc".Contains(x => x.Text);
+//var b = "123abc".Contains(x => x.TextOnly);
+//var c = "abc".Contains(x => x.Number);
+//var d = "123abc".Contains(x => x.NumberOnly);
+//"".Log(a);
 //"".FirstOrDefault(x => x == 'a');
 //StringExtension.LoremIpsum(minWords: 4, maxWords: 64, minSentences: 1, maxSentences: 4, numParagraphs: 4);
 //"Thuaanj".ReverseString().Log();

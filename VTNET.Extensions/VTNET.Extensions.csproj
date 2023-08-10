@@ -3,14 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
-    <Authors>Võ Thành Thuận</Authors>
+    <Authors>VTNET</Authors>
     <Description>Library Name is a collection of utility methods for manipulating various data types.</Description>
     <Copyright>Copyright (c) 2023 Vo Thanh Thuan</Copyright>
     <FileVersion></FileVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	<PackageReadmeFile>readme.md</PackageReadmeFile>
 	<PackageLicenseFile>LICENSE</PackageLicenseFile>
-	<Version>1.3.0-beta</Version>
+	<Version>1.4.1</Version>
 
 	<!-- NuGet settings -->
 	<PackageId>VTNET.Extensions</PackageId>

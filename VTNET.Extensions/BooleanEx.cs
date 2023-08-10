@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace VTNET.Extensions
 {
@@ -45,7 +42,7 @@ namespace VTNET.Extensions
             }
             else if (value is Array array)
             {
-                return array.Length > 1;
+                return array.Length > 0;
             }
             else if (value is ICollection collection && collection.Count < 1)
             {
@@ -56,10 +53,6 @@ namespace VTNET.Extensions
                 return false;
             }
             else if (value is Guid guid && guid == Guid.Empty)
-            {
-                return false;
-            }
-            else if (value is DateTime dt && dt == DateTime.MinValue)
             {
                 return false;
             }

@@ -1,17 +1,5 @@
-﻿using System.ComponentModel;
-using System.Data;
-using System.Dynamic;
-using System.Globalization;
-using System.Reflection;
-using System.Text.RegularExpressions;
+﻿using System;
 using System.Text;
-using VTNET.Extensions.Languages;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Threading;
-using System;
-using System.Collections;
 
 namespace VTNET.Extensions
 {
