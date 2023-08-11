@@ -170,7 +170,7 @@ namespace VTNET.Extensions
         /// <returns></returns>
         public static string ToWords(this int number, LangWords lang = LangWords.DEFAULT)
         {
-            return ToWords(number, lang);
+            return ToWords((decimal)number, lang);
         }
         /// <summary>
         /// Thousand separator for numbers

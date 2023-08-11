@@ -9,7 +9,7 @@ StringEx.SetLanguageToWords(LangWords.VN);
 while (true)
 {
     Console.WriteLine("Nhập số tiền: ");
-    var amount = double.Parse(Console.ReadLine());
+    var amount = int.Parse(Console.ReadLine());
 
     string amountInWords = amount.ToWords();
     string amountInWordsEN = amount.ToWords(LangWords.EN);
