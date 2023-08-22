@@ -5,17 +5,26 @@ using VTNET.Extensions.Languages;
 
 
 Console.OutputEncoding = Encoding.UTF8;
-StringEx.SetLanguageToWords(LangWords.VN);
-while (true)
-{
-    Console.WriteLine("Nhập số tiền: ");
-    var amount = int.Parse(Console.ReadLine());
 
-    string amountInWords = amount.ToWords();
-    string amountInWordsEN = amount.ToWords(LangWords.EN);
-    Console.WriteLine("Số tiền bằng chữ (tiếng việt): " + amountInWords);
-    Console.WriteLine("Số tiền bằng chữ (tiếng anh): " + amountInWordsEN);
-}
+var a = 5;
+var b = "a";
+int? c = 1;
+string? d = "0";
+NumberEx.IsNumberType(a).Log();
+NumberEx.IsNumberType(b).Log();
+NumberEx.IsNumberType(c).Log();
+StringEx.IsNumericString(d).Log();
+StringEx.SetLanguageToWords(LangWords.VN);
+//while (true)
+//{
+//    Console.WriteLine("Nhập số tiền: ");
+//    var amount = int.Parse(Console.ReadLine());
+
+//    string amountInWords = amount.ToWords();
+//    string amountInWordsEN = amount.ToWords(LangWords.EN);
+//    Console.WriteLine("Số tiền bằng chữ (tiếng việt): " + amountInWords);
+//    Console.WriteLine("Số tiền bằng chữ (tiếng anh): " + amountInWordsEN);
+//}
 
 //var list = new List<int>() { 
 //    1, 2, 2, 2,

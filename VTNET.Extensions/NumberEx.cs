@@ -1,22 +1,28 @@
 ﻿using System;
+using System.Linq;
 
 namespace VTNET.Extensions
 {
     public static class NumberEx
     {
+        static Type[] _numberTypes = new Type[]
+        {
+                typeof(sbyte), typeof(byte),
+                typeof(short), typeof(ushort),
+                typeof(int), typeof(uint),
+                typeof(long), typeof(ulong),
+                typeof(float), typeof(double), typeof(decimal)
+        };
         /// <summary>
         /// Check if object is numeric?
         /// </summary>
         /// <param name="variable"></param>
         /// <returns></returns>
-        public static bool IsNumberType(object variable)
+        public static bool IsNumberType(object? variable)
         {
-            return variable is sbyte || variable is byte ||
-               variable is short || variable is ushort ||
-               variable is int || variable is uint ||
-               variable is long || variable is ulong ||
-               variable is float || variable is double || variable is decimal;
+            return _numberTypes.Contains(variable?.GetType());
         }
+
 
         public static bool IsEven(object? number)
         {
@@ -67,29 +73,7 @@ namespace VTNET.Extensions
         {
             return !number.IsEven();
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        //public static dynamic? ToDynamic(this object value)
-        //{
-        //    IDictionary<string, object?> expando = new ExpandoObject();
 
-        //    foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(value.GetType()))
-        //        expando.Add(property.Name, property.GetValue(value));
-
-        //    return expando as ExpandoObject;
-        //}
-        //public static int ParseInt(this string value)
-        //{
-        //    _ = double.TryParse(value, out var result);
-        //    return (int)result;
-        //}
-        //public static float ParseFloat(this string value)
-        //{
-        //    return float.TryParse(value, out var result) ? result : float.NaN;
-        //}
         public static double ParseNumber(this string value)
         {
             return double.TryParse(value, out var result) ? result : double.NaN;
