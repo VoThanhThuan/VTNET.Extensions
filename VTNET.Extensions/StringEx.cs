@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -35,7 +36,7 @@ namespace VTNET.Extensions
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        public static bool IsNullOrEmpty(this string? text)
+        public static bool IsNullOrEmpty([NotNullWhen(false)] this string? text)
         {
             return string.IsNullOrEmpty(text);
         }
@@ -44,7 +45,7 @@ namespace VTNET.Extensions
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        public static bool IsNullOrWhiteSpace(this string? text)
+        public static bool IsNullOrWhiteSpace([NotNullWhen(false)] this string? text)
         {
             return string.IsNullOrWhiteSpace(text);
         }

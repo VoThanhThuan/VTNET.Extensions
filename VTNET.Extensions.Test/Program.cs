@@ -15,6 +15,7 @@ NumberEx.IsNumberType(b).Log();
 NumberEx.IsNumberType(c).Log();
 StringEx.IsNumericString(d).Log();
 StringEx.SetLanguageToWords(LangWords.VN);
+
 //while (true)
 //{
 //    Console.WriteLine("Nhập số tiền: ");
