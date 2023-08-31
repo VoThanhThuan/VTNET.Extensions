@@ -5,7 +5,9 @@ using VTNET.Extensions.Languages;
 
 
 Console.OutputEncoding = Encoding.UTF8;
+StringEx.SetLanguageToWords(LangWords.VN);
 
+var tes = 010.ToWords();
 var a = 5;
 var b = "a";
 int? c = 1;
@@ -14,7 +16,6 @@ NumberEx.IsNumberType(a).Log();
 NumberEx.IsNumberType(b).Log();
 NumberEx.IsNumberType(c).Log();
 StringEx.IsNumericString(d).Log();
-StringEx.SetLanguageToWords(LangWords.VN);
 
 //while (true)
 //{

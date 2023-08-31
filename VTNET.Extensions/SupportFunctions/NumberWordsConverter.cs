@@ -17,7 +17,7 @@ namespace VTNET.Extensions.SupportFunctions
         /// <returns></returns>
         public static string ToWordsEnglish(decimal number)
         {
-            if (number <= 0) return Empty;
+            if (number < 0) return Empty;
             decimal fractionalDigits = number % 1;
             string integralDigitsString = number
                 .ToString(CultureInfo.InvariantCulture)
@@ -27,7 +27,7 @@ namespace VTNET.Extensions.SupportFunctions
                                                     CultureInfo.InvariantCulture)
                                                 .Split('.')
                                                 .ElementAtOrDefault(1) ?? Empty;
-            if (decimal.Parse(integralDigitsString) <= 0 && decimal.Parse(fractionalDigitsString) <= 0) return Empty;
+            if (decimal.Parse(integralDigitsString) < 0 && decimal.Parse(fractionalDigitsString) < 0) return Empty;
 
             string integralWords = Empty;
             if (decimal.Parse(integralDigitsString) > 0)
@@ -36,7 +36,7 @@ namespace VTNET.Extensions.SupportFunctions
                 //integralWords = integralWords;
             }
 
-            if (int.Parse(fractionalDigitsString) <= 0 || IsNullOrEmpty(fractionalDigitsString)) return integralWords;
+            if (int.Parse(fractionalDigitsString) < 0 || IsNullOrEmpty(fractionalDigitsString)) return integralWords;
 
             string fractionalWords = _conversionFactory.ConvertDigits(fractionalDigitsString);
 
@@ -52,6 +52,11 @@ namespace VTNET.Extensions.SupportFunctions
             string[] unitNumbers = new string[] { "không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín" };
             string[] placeValues = new string[] { "", "nghìn", "triệu", "tỷ" };
             bool isNegative = false;
+
+            if(inputNumber == 0)
+            {
+                return unitNumbers[0];
+            }
 
             // -12345678.3445435 => "-12345678"
             var splitFloatNumber = inputNumber.ToString().Split('.');

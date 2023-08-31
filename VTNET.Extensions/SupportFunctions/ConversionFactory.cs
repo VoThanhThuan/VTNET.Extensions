@@ -61,7 +61,7 @@ namespace VTNET.Extensions.SupportFunctions
         /// <returns></returns>
         internal string ConvertDigits(string digits)
         {
-            if (digits == "0") return _ones[0];
+            if (digits == "0" || digits == "00") return _ones[0];
             StringBuilder builder = new StringBuilder();
             int scaleMapIndex = (int)Math.Ceiling((decimal)digits.Length / 3);
             for (int i = scaleMapIndex; i > 0; i--)
