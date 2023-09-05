@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using VTNET.Extensions.Languages;
 using static System.String;
 
@@ -46,7 +47,15 @@ namespace VTNET.Extensions.SupportFunctions
             return fractionalWords;
 
         }
-
+        static string DetectZeroFloatNumber(string floatNumber, string unitNumbers)
+        {
+            StringBuilder result = new StringBuilder();
+            for (int i = 0; i < floatNumber.Length && floatNumber[i] == '0'; i++)
+            {
+                result.Append($"{unitNumbers} ");
+            }
+            return result.ToString();
+        }
         public static string ToWordsVietnamese(decimal inputNumber)
         {
             string[] unitNumbers = new string[] { "không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín" };
@@ -61,8 +70,8 @@ namespace VTNET.Extensions.SupportFunctions
             // -12345678.3445435 => "-12345678"
             var splitFloatNumber = inputNumber.ToString().Split('.');
             string floatNumber = splitFloatNumber.Length > 1 ? splitFloatNumber[1] : "";
-            string sNumber = inputNumber.ToString("#");
-            decimal number = Convert.ToDecimal(sNumber);
+            string sNumber = splitFloatNumber[0] == "0" ? "" : inputNumber.ToString("#");
+            decimal number = sNumber.IsNullOrEmpty() ? 0 : Convert.ToDecimal(sNumber);
             if (number < 0)
             {
                 number = -number;
@@ -138,9 +147,9 @@ namespace VTNET.Extensions.SupportFunctions
                 }
             }
             result = result.Trim();
-            if (!string.IsNullOrEmpty(floatNumber))
+            if (!IsNullOrEmpty(floatNumber))
             {
-                result += $" {LanguageNumberWords.FloatPointVN} " + ToWordsVietnamese(decimal.Parse(floatNumber));
+                result += $" {LanguageNumberWords.FloatPointVN} " + DetectZeroFloatNumber(floatNumber, unitNumbers[0]) + ToWordsVietnamese(decimal.Parse(floatNumber));
             }
             if (isNegative) result = "Âm " + result;
             return result;

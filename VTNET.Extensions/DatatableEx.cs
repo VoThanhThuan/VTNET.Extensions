@@ -10,6 +10,26 @@ namespace VTNET.Extensions
 {
     public static class DatatableEx
     {
+        //public static List<T> ToList<T>(this DataTable table, bool matchCase = false) where T : new()
+        //{
+        //    var properties = typeof(T).GetProperties()
+        //        .ToDictionary(GetColumnName, prop => prop.Name, matchCase ? StringComparer.Ordinal : StringComparer.OrdinalIgnoreCase);
+
+        //    var list = table.AsEnumerable().Select(row =>
+        //    {
+        //        var item = new T();
+        //        foreach (DataColumn column in table.Columns)
+        //        {
+        //            if (properties.TryGetValue(column.ColumnName, out var propertyName) && row[column] != DBNull.Value)
+        //            {
+        //                var propertyInfo = typeof(T).GetProperty(propertyName);
+        //                propertyInfo?.SetValue(item, Convert.ChangeType(row[column], propertyInfo.PropertyType));
+        //            }
+        //        }
+        //        return item;
+        //    }).ToList();
+        //    return list;
+        //}
         public static List<T> ToList<T>(this DataTable table, bool matchCase = false) where T : new()
         {
             var properties = typeof(T).GetProperties()
@@ -23,13 +43,22 @@ namespace VTNET.Extensions
                     if (properties.TryGetValue(column.ColumnName, out var propertyName) && row[column] != DBNull.Value)
                     {
                         var propertyInfo = typeof(T).GetProperty(propertyName);
-                        propertyInfo?.SetValue(item, Convert.ChangeType(row[column], propertyInfo.PropertyType));
+                        if (propertyInfo.PropertyType.IsGenericType && propertyInfo.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                        {
+                            Type underlyingType = Nullable.GetUnderlyingType(propertyInfo.PropertyType);
+                            propertyInfo.SetValue(item, Convert.ChangeType(row[column], underlyingType));
+                        }
+                        else
+                        {
+                            propertyInfo?.SetValue(item, Convert.ChangeType(row[column], propertyInfo.PropertyType));
+                        }
                     }
                 }
                 return item;
             }).ToList();
             return list;
         }
+
         public static List<T> ToListParallel<T>(this DataTable table) where T : new()
         {
             var list = new List<T>();

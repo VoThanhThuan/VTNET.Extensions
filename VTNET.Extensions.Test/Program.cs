@@ -7,7 +7,7 @@ using VTNET.Extensions.Languages;
 Console.OutputEncoding = Encoding.UTF8;
 StringEx.SetLanguageToWords(LangWords.VN);
 
-var tes = 010.ToWords();
+var tes = 5.0.ToWords();
 var a = 5;
 var b = "a";
 int? c = 1;
