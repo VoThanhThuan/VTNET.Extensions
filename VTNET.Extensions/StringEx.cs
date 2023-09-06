@@ -55,7 +55,7 @@ namespace VTNET.Extensions
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static bool IsNumericString(this string? input, char? thousandSeparator = null, char? decimalDigits = null)
+        public static bool IsNumeric(this string? input, char? thousandSeparator = null, char? decimalDigits = null)
         {
             if (string.IsNullOrEmpty(input))
             {
@@ -73,6 +73,11 @@ namespace VTNET.Extensions
             return Regex.IsMatch(input, pattern);
         }
 
+        [Obsolete("replace with .IsNumberic")]
+        public static bool IsNumericString(this string? input, char? thousandSeparator = null, char? decimalDigits = null)
+        {
+            return IsNumeric(input, thousandSeparator, decimalDigits);
+        }
         /// <summary>
         /// Chuyển chữ tiếng việt có dấu thành không dấu
         /// </summary>

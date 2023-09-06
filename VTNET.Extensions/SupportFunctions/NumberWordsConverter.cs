@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using VTNET.Extensions.Languages;
 using static System.String;
 
@@ -68,7 +69,10 @@ namespace VTNET.Extensions.SupportFunctions
             }
 
             // -12345678.3445435 => "-12345678"
-            var splitFloatNumber = inputNumber.ToString().Split('.');
+            // Tạo một CultureInfo dựa trên ngôn ngữ hiện hành của hệ thống
+            CultureInfo culture = CultureInfo.CurrentCulture;
+            string decimalSeparator = culture.NumberFormat.NumberDecimalSeparator;
+            var splitFloatNumber = inputNumber.ToString().Split(decimalSeparator.ToCharArray());
             string floatNumber = splitFloatNumber.Length > 1 ? splitFloatNumber[1] : "";
             string sNumber = splitFloatNumber[0] == "0" ? "" : splitFloatNumber[0];
             decimal number = sNumber.IsNullOrEmpty() ? 0 : Convert.ToDecimal(sNumber);

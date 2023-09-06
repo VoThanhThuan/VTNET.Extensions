@@ -1,11 +1,13 @@
 ﻿using System.Data;
+using System.Globalization;
 using System.Text;
 using VTNET.Extensions;
 using VTNET.Extensions.Languages;
 
-
 Console.OutputEncoding = Encoding.UTF8;
 StringEx.SetLanguageToWords(LangWords.VN);
+
+CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("vi-VN");
 
 var tes = 16.0000069.ToWords();
 var a = 5;
