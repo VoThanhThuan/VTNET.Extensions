@@ -70,7 +70,7 @@ namespace VTNET.Extensions.SupportFunctions
             // -12345678.3445435 => "-12345678"
             var splitFloatNumber = inputNumber.ToString().Split('.');
             string floatNumber = splitFloatNumber.Length > 1 ? splitFloatNumber[1] : "";
-            string sNumber = splitFloatNumber[0] == "0" ? "" : inputNumber.ToString("#");
+            string sNumber = splitFloatNumber[0] == "0" ? "" : splitFloatNumber[0];
             decimal number = sNumber.IsNullOrEmpty() ? 0 : Convert.ToDecimal(sNumber);
             if (number < 0)
             {
