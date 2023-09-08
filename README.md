@@ -131,8 +131,26 @@ CalculateEx.AddOperator('#', Math.Max, 3);
 
 "addone(1)> ".Log("addone(1)".Calculate()); //2
 "1?100> ".Log("1?100".Calculate());
-"sum(a,2,3,4,5,6)> ".Log("sum(a,2,3,4,5,6)".Calculate()); //21
+"sum(1;2;3;4;5;6)> ".Log("sum(1;2;3;4;5;6)".Calculate()); //21
 "1#2#3#6#5#4> ".Log("1#2#3#6#5#4".Calculate()); //6
+
+//Degree and Radian
+CalculateEx.AddSimpleFunction("circle", (num, isDeg) =>
+{
+    return isDeg ? num*360 : num;
+});
+CalculateEx.AddFunction("circleSum", (agrs, isDeg) =>
+{
+    return isDeg ? agrs.Sum() * 360 : agrs.Sum();
+});
+"circle(1/8deg)".Calculate(); //45
+"circleSum(1/8;1/8deg)".Calculate(); //90
+
+//Change CultureInfo
+"3.14+1".Calculate().Log(); //4.14
+CalculateEx.Culture = new CultureInfo("vi-VN");
+"3.14+1".Calculate().Log(); //315
+"3,14+1".Calculate().Log(); //4.14
 ```
 
 ### DataTable To List

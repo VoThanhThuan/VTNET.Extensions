@@ -1,37 +1,30 @@
-﻿using VTNET.Extensions;
+﻿using System;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using VTNET.Extensions;
 
-//CalculateExtension.AddOperator('s', (a, b) =>
-//{
-//    return Random.Shared.Next((int)a, (int)b);
-//});
-//"sin(30)+sin(60)".Calculate().Log();
 
-//CalculateExtension.AddSimpleFunction("addone", num =>
-//{
-//    return ++num;
-//});
+CalculateEx.AddSimpleFunction("addone", num =>
+{
+    return ++num;
+});
+CalculateEx.AddSimpleFunction("circle", (num, isDeg) =>
+{
+    return isDeg ? num*360 : num;
+});
 
-//CalculateExtension.AddFunction("sum", agrs =>
-//{
-//    return agrs.Sum();
-//});
+CalculateEx.AddFunction("sum", agrs =>
+{
+    return agrs.Sum();
+});
 
-//CalculateExtension.AddOperator('?', (a, b) =>
-//{
-//    return Random.Shared.Next((int)a, (int)b);
-//}, 3);
+CalculateEx.AddFunction("circleSum", (agrs, isDeg) =>
+{
+    return isDeg ? agrs.Sum() * 360 : agrs.Sum();
+});
 
-//CalculateExtension.AddOperator('#', Math.Max, 3);
+//CalculateEx.AddOperator('#', Math.Max, 3);
 
-//"addone(1)> ".Log("addone(1)".Calculate());
-//"1?100> ".Log("1?100".Calculate());
-//"sum(a,2,3,4,5,6)> ".Log("sum(a,2,3,4,5,6)".Calculate());
-//"1#2#3#6#5#4> ".Log("1#2#3#6#5#4".Calculate());
-
-//"sin(30deg)> ".Log("sin(30deg)".Calculate());
-//"tan(30deg)> ".Log("tan(30deg)".Calculate());
-//"cos(30deg)> ".Log("cos(30deg)".Calculate());
-//"log(30deg)> ".Log("log(30deg)".Calculate());
 
 var isRun = true;
 Console.WriteLine("--**Calculate**--");
@@ -41,6 +34,31 @@ while (isRun)
 {
     Console.Write(">> ");
     str = Console.ReadLine();
-    "==>> ".Log(str.Calculate());
+    switch (str)
+    {
+        case "/cul":
+            Console.Write("What's culture?(ex: 'vi-VN')>> ");
+            str = Console.ReadLine();
+            if (!str.IsNullOrEmpty())
+            {
+                CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(str);
+                CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(str);
+            }
+            break;
+        case "/cul/cal":
+            Console.Write("What's culture?(ex: 'vi-VN')>> ");
+            str = Console.ReadLine();
+            if (!str.IsNullOrEmpty())
+            {
+                CalculateEx.Culture = new CultureInfo(str);
+            }
+            break;
+        default:
+            if (!str.IsNullOrEmpty())
+            {
+                "==>> ".Log(str.Calculate());
+            }
+            break;
 
+    }
 }
