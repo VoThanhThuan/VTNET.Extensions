@@ -159,5 +159,34 @@ namespace VTNET.Extensions
 
         private static readonly Dictionary<string, Dictionary<string, PropertyInfoWrapper>> PropertyCache = new Dictionary<string, Dictionary<string, PropertyInfoWrapper>>();
 
+        public static List<Dictionary<string, object>> ToListDictionary(this DataTable dataTable)
+        {
+            //var dictionary = new Dictionary<string, object>();
+
+            var dataList = new List<Dictionary<string, object>>();
+            foreach (DataRow row in dataTable.Rows)
+            {
+                Dictionary<string, object> data = new Dictionary<string, object>();
+                foreach (DataColumn col in dataTable.Columns)
+                {
+                    data[col.ColumnName] = row[col];
+                }
+                dataList.Add(data);
+            }
+            return dataList;
+        }
+
+        public static DataTable SortTable(this DataTable table, string columnsName, bool ascending = true)
+        {
+            return SortTable(table, new List<string>() { columnsName}, ascending);
+        }
+        public static DataTable SortTable(this DataTable table, List<string> columnsName, bool ascending = true)
+        {
+            DataView dataView = table.DefaultView;
+            var sortBy = ascending ? " ASC" : " DESC";
+            dataView.Sort = string.Join($" {sortBy},", columnsName) + $" {sortBy}";
+            return dataView.ToTable();
+        }
+
     }
 }

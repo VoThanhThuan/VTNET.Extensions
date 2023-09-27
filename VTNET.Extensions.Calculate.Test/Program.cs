@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 using VTNET.Extensions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 CalculateEx.AddSimpleFunction("addone", num =>
@@ -23,7 +24,10 @@ CalculateEx.AddFunction("circleSum", (agrs, isDeg) =>
     return isDeg ? agrs.Sum() * 360 : agrs.Sum();
 });
 
-//CalculateEx.AddOperator('#', Math.Max, 3);
+CalculateEx.AddOperator('v', (a, b) =>
+{
+   return Math.Pow(b, 1.0 / a);
+}, 3);
 
 
 var isRun = true;
