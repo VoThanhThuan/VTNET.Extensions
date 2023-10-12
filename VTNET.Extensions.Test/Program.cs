@@ -17,7 +17,7 @@ string? d = "0";
 NumberEx.IsNumberType(a).Log();
 NumberEx.IsNumberType(b).Log();
 NumberEx.IsNumberType(c).Log();
-StringEx.IsNumericString(d).Log();
+StringEx.IsNumeric(d).Log();
 
 //while (true)
 //{

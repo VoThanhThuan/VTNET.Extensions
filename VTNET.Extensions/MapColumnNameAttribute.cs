@@ -3,11 +3,11 @@
 namespace VTNET.Extensions
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public class ColumnNameAttribute : Attribute
+    public class MapColumnNameAttribute : Attribute
     {
         public string Name { get; private set; }
 
-        public ColumnNameAttribute(string name)
+        public MapColumnNameAttribute(string name)
         {
             Name = name;
         }

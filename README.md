@@ -166,9 +166,9 @@ var list2 = dataTable.ToListCache<model>(matchCase: true);
 
 //Specify the column name other fields
 class TestTable{
-	[ColumnName("IDX")]
+	[MapColumnName("IDX")]
 	public string Id { get; set; } = "";
-	[ColumnName("FULLNAME")]
+	[MapColumnName("FULLNAME")]
 	public string Name { get; set; } = "";
 }
 ```

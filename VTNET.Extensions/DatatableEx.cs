@@ -63,7 +63,7 @@ namespace VTNET.Extensions
         {
             var list = new List<T>();
             var properties = typeof(T).GetProperties()
-                .ToDictionary(prop => prop.GetCustomAttribute<ColumnNameAttribute>()?.Name ?? prop.Name, prop => prop.Name);
+                .ToDictionary(prop => prop.GetCustomAttribute<MapColumnNameAttribute>()?.Name ?? prop.Name, prop => prop.Name);
 
             _ = Parallel.ForEach(table.Rows.Cast<DataRow>(), row =>
             {
@@ -126,7 +126,7 @@ namespace VTNET.Extensions
         }
         private static string GetColumnName(PropertyInfo prop)
         {
-            var columnNameAttribute = prop.GetCustomAttribute<ColumnNameAttribute>();
+            var columnNameAttribute = prop.GetCustomAttribute<MapColumnNameAttribute>();
             return columnNameAttribute?.Name ?? prop.Name;
         }
 
