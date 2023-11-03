@@ -12,4 +12,8 @@ namespace VTNET.Extensions
             Name = name;
         }
     }
+    [AttributeUsage(AttributeTargets.Property)]
+    public class IgnoreMapColumnNameAttribute : Attribute
+    {
+    }
 }

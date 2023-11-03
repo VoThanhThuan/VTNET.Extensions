@@ -7,6 +7,8 @@ using VTNET.Extensions.Languages;
 Console.OutputEncoding = Encoding.UTF8;
 StringEx.SetLanguageToWords(LangWords.VN);
 
+var testToTitle = "NGAY lương".ToTitle(ignoreUpperCase:true);
+
 CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("vi-VN");
 
 var tes = 16.0000069.ToWords();
@@ -18,6 +20,15 @@ NumberEx.IsNumberType(a).Log();
 NumberEx.IsNumberType(b).Log();
 NumberEx.IsNumberType(c).Log();
 StringEx.IsNumeric(d).Log();
+
+var dic = new List<Dictionary<string, object?>>
+        {
+            new() { { "ID", 1 }, { "Name", "John" }, { "Age", 30 } },
+            new() { { "ID", 2 }, { "Name", "Alice" }, { "Age", 25 } },
+            new() { { "ID", 3 }, { "Name", "Bob" }, { "Age", null } }
+        };
+var table = dic.ToDataTable();
+var valueMap = table.ToList<TestTable>();
 
 //while (true)
 //{
@@ -67,10 +78,11 @@ StringEx.IsNumeric(d).Log();
 //    a,b,c,d,e,f,g,h
 //}
 
-//class TestTable
-//{
-//    public int a { get; set; }
-//    public int b { get; set; }
-//    [ColumnName("Z")]
-//    public int c { get; set; }
-//}
+class TestTable
+{
+    [MapColumnName("Id")]
+    public string Idx { get; set; } = "";
+    [IgnoreMapColumnName]
+    public string Name { get; set; } = "";
+    public string Age { get; set; } = "";
+}

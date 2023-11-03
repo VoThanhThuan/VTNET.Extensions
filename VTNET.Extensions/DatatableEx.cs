@@ -33,6 +33,7 @@ namespace VTNET.Extensions
         public static List<T> ToList<T>(this DataTable table, bool matchCase = false) where T : new()
         {
             var properties = typeof(T).GetProperties()
+                .Where(prop => prop.GetCustomAttribute<IgnoreMapColumnNameAttribute>() == null)
                 .ToDictionary(GetColumnName, prop => prop.Name, matchCase ? StringComparer.Ordinal : StringComparer.OrdinalIgnoreCase);
 
             var list = table.AsEnumerable().Select(row =>
@@ -63,6 +64,7 @@ namespace VTNET.Extensions
         {
             var list = new List<T>();
             var properties = typeof(T).GetProperties()
+                .Where(prop => prop.GetCustomAttribute<IgnoreMapColumnNameAttribute>() == null)
                 .ToDictionary(prop => prop.GetCustomAttribute<MapColumnNameAttribute>()?.Name ?? prop.Name, prop => prop.Name);
 
             _ = Parallel.ForEach(table.Rows.Cast<DataRow>(), row =>
@@ -118,6 +120,7 @@ namespace VTNET.Extensions
             else
             {
                 var properties = typeof(T).GetProperties()
+                    .Where(prop => prop.GetCustomAttribute<IgnoreMapColumnNameAttribute>() == null)
                     .ToDictionary(GetColumnName, prop => new PropertyInfoWrapper(prop), matchCase ? StringComparer.Ordinal : StringComparer.OrdinalIgnoreCase);
 
                 PropertyCache[key] = properties;
@@ -166,7 +169,7 @@ namespace VTNET.Extensions
             var dataList = new List<Dictionary<string, object>>();
             foreach (DataRow row in dataTable.Rows)
             {
-                Dictionary<string, object> data = new Dictionary<string, object>();
+                var data = new Dictionary<string, object>();
                 foreach (DataColumn col in dataTable.Columns)
                 {
                     data[col.ColumnName] = row[col];
@@ -182,11 +185,29 @@ namespace VTNET.Extensions
         }
         public static DataTable SortTable(this DataTable table, List<string> columnsName, bool ascending = true)
         {
-            DataView dataView = table.DefaultView;
+            var dataView = table.DefaultView;
             var sortBy = ascending ? " ASC" : " DESC";
             dataView.Sort = string.Join($" {sortBy},", columnsName) + $" {sortBy}";
             return dataView.ToTable();
         }
 
+        public static DataTable ToDataTable(this List<Dictionary<string, object?>> data)
+        {
+            var dataTable = new DataTable();
+            foreach (var key in data[0].Keys)
+            {
+                dataTable.Columns.Add(key, typeof(object));
+            }
+            foreach (var dict in data)
+            {
+                DataRow row = dataTable.NewRow();
+                foreach (var key in dict.Keys)
+                {
+                    row[key] = dict[key];
+                }
+                dataTable.Rows.Add(row);
+            }
+            return dataTable;
+        }
     }
 }

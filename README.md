@@ -8,8 +8,8 @@ Library Name is a collection of utility methods for manipulating various data ty
 - Convert a number to words: `"1000".ToWords()`
 - Format a number as currency: `1000.ToCurrency()`
 - Remove spaces from a string: `"a   b       c".RemoveDuplicateSpaces()`
-- Capitalize the first letter of each word in a string: `"vo thanh thuan".Capitalize()`
-- Convert a string to title case: `"vo thanh thuan".Title()`
+- Capitalize the first letter of each word in a string: `"vo thanh thuan".ToCapitalize()`
+- Convert a string to title case: `"vo thanh thuan".ToTitle()`
 - Convert a string to title case: `StringEx.Lorem`
 - Convert DataTable to List: `var list = dataTable.ToList<model>()`
 - Support string methods: `IsNullOrEmpty(), IsNullOrWhiteSpace()`
@@ -45,10 +45,11 @@ string text = "a   b       c";
 string trimmedText = text.RemoveDuplicateSpaces(); // "a b c"
 
 string name = "vo thanh thuan";
-string capitalized = name.Capitalize(); // "Vo thanh thuan"
+string capitalized = name.ToCapitalize(); // "Vo thanh thuan"
 
-string title = "vo thanh thuan";
-string titleCase = title.Title(); // "Vo Thanh Thuan"
+string title = "VO THANH THUAN";
+string titleCase1 = title.ToTitle(ignoreUpperCase:true); // "VO THANH THUAN"
+string titleCase2 = title.ToTitle(ignoreUpperCase:false); // "Vo Thanh Thuan"
 
 string reverseString = "Thuaanj".ReverseString(); // "jnaauhT"
 
@@ -163,12 +164,23 @@ var list2 = dataTable.ToList<model>(matchCase: true);
 //Convert with cache
 var list2 = dataTable.ToListCache<model>(matchCase: true);
 
+//Convert List<Dictionary<string, object?>> to DataTable
+var dic = new List<Dictionary<string, object?>>
+        {
+            new() { { "ID", 1 }, { "Name", "John" }, { "Age", 30 } },
+            new() { { "ID", 2 }, { "Name", "Alice" }, { "Age", 25 } },
+            new() { { "ID", 3 }, { "Name", "Bob" }, { "Age", null } }
+        };
+var table = dic.ToDataTable();
+var valueMap = table.ToList<TestTable>();
 
 //Specify the column name other fields
-class TestTable{
-	[MapColumnName("IDX")]
-	public string Id { get; set; } = "";
-	[MapColumnName("FULLNAME")]
-	public string Name { get; set; } = "";
+class TestTable
+{
+    [MapColumnName("Id")]
+    public string Idx { get; set; } = "";
+    [IgnoreMapColumnName]
+    public string Name { get; set; } = "";
+    public string Age { get; set; } = "";
 }
 ```

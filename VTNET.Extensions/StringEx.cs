@@ -223,26 +223,38 @@ namespace VTNET.Extensions
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        public static string Capitalize(this string text)
+        public static string ToCapitalize(this string text, bool ignoreUpperCase = true)
         {
+            if (!ignoreUpperCase)
+            {
+                text = text.ToLower();
+            }
             if (string.IsNullOrEmpty(text)) return text;
             if (text.Length == 1) return text.ToUpper();
             return char.ToUpper(text[0]) + text.Substring(1);
         }
-
+        [Obsolete]
+        public static string Capitalize(this string text) => ToCapitalize(text);
+        
         /// <summary>
         /// Capitalize the first letter of each word
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        public static string Title(this string text)
+        public static string ToTitle(this string text, bool ignoreUpperCase = true)
         {
+            if (!ignoreUpperCase)
+            {
+                text = text.ToLower();
+            }
             if (string.IsNullOrEmpty(text)) return text;
             if (text.Length == 1) return text.ToUpper();
             var cultureInfo = Thread.CurrentThread.CurrentCulture;
             var textInfo = cultureInfo.TextInfo;
             return textInfo.ToTitleCase(text);
         }
+        [Obsolete]
+        public static string Title(this string text) => ToTitle(text);
 
         /// <summary>
         /// Similar <see cref="string.Join(string?, IEnumerable{string?})"/>
