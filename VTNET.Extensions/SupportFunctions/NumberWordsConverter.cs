@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using VTNET.Extensions.Languages;
 using static System.String;
 
@@ -125,7 +124,7 @@ namespace VTNET.Extensions.SupportFunctions
                     if (placeValue > 3) placeValue = 1;
 
                     if ((ones == 1) && (tens > 1))
-                        result = "một " + result;
+                        result = "mốt " + result;
                     else
                     {
                         if ((ones == 5) && (tens > 0))

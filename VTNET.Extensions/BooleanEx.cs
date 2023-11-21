@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace VTNET.Extensions
 {
@@ -10,7 +11,7 @@ namespace VTNET.Extensions
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static bool IsTrue(object? value)
+        public static bool IsTrue([NotNullWhen(true)] object? value)
         {
             if (value is null)
             {
@@ -21,18 +22,16 @@ namespace VTNET.Extensions
             {
                 return boolean;
             }
-            else if (value is string str)
+            if (value is string str)
             {
-                if ((double.TryParse(str, out var num) && num < 1))
+                if (str.IsNullOrWhiteSpace())
                 {
                     return false;
-                }
-                else
-                {
-                    return !string.IsNullOrWhiteSpace(str);
+                }else{
+                    return ((double.TryParse(str, out var num) && num < 1));
                 }
             }
-            else if (NumberEx.IsNumberType(value))
+            if (NumberEx.IsNumberType(value))
             {
                 var number = Convert.ToDouble(value);
                 if (number < 1)
@@ -40,19 +39,23 @@ namespace VTNET.Extensions
                     return false;
                 }
             }
-            else if (value is Array array)
+            if (value is Array array)
             {
                 return array.Length > 0;
             }
-            else if (value is ICollection collection && collection.Count < 1)
+            if (value is ICollection collection && collection.Count < 1)
             {
                 return false;
             }
-            else if (value is Enum && value.GetHashCode() == 0)
+            if (value is Enum && value.GetHashCode() == 0)
             {
                 return false;
             }
-            else if (value is Guid guid && guid == Guid.Empty)
+            if (value is Guid guid && guid == Guid.Empty)
+            {
+                return false;
+            }
+            if (value is DBNull)
             {
                 return false;
             }
@@ -64,7 +67,7 @@ namespace VTNET.Extensions
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static bool IsFalse(object? value)
+        public static bool IsFalse([NotNullWhen(false)] object? value)
         {
             return !IsTrue(value);
         }

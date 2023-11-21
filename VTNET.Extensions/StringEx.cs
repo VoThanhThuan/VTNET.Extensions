@@ -233,7 +233,7 @@ namespace VTNET.Extensions
             if (text.Length == 1) return text.ToUpper();
             return char.ToUpper(text[0]) + text.Substring(1);
         }
-        [Obsolete]
+        [Obsolete("Replace with 'ToCapitalize'")]
         public static string Capitalize(this string text) => ToCapitalize(text);
         
         /// <summary>
@@ -253,7 +253,7 @@ namespace VTNET.Extensions
             var textInfo = cultureInfo.TextInfo;
             return textInfo.ToTitleCase(text);
         }
-        [Obsolete]
+        [Obsolete("Replace with 'ToTitle'")]
         public static string Title(this string text) => ToTitle(text);
 
         /// <summary>
@@ -346,7 +346,7 @@ namespace VTNET.Extensions
                 }
                 if (numParagraphs - 1 > p)
                 {
-                    wordAfterDot = " " + words[rand.Next(words.Length)].Capitalize();
+                    wordAfterDot = " " + words[rand.Next(words.Length)].ToCapitalize();
                 }
                 result.Add($".{wordAfterDot}");
             }

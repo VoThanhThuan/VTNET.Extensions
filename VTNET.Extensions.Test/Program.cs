@@ -1,5 +1,4 @@
-﻿using System.Data;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 using VTNET.Extensions;
 using VTNET.Extensions.Languages;
@@ -7,28 +6,38 @@ using VTNET.Extensions.Languages;
 Console.OutputEncoding = Encoding.UTF8;
 StringEx.SetLanguageToWords(LangWords.VN);
 
-var testToTitle = "NGAY lương".ToTitle(ignoreUpperCase:true);
+//var testToTitle = "NGAY lương".ToTitle(ignoreUpperCase:true);
 
 CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("vi-VN");
 
-var tes = 16.0000069.ToWords();
-var a = 5;
-var b = "a";
-int? c = 1;
-string? d = "0";
-NumberEx.IsNumberType(a).Log();
-NumberEx.IsNumberType(b).Log();
-NumberEx.IsNumberType(c).Log();
-StringEx.IsNumeric(d).Log();
+var tes = 21.ToWords();
+tes = 321.ToWords();
+tes = 4321.ToWords();
+tes = 54321.ToWords();
+tes = 654321.ToWords();
+tes = 654312.ToWords();
+tes = 654132.ToWords();
+tes = 651432.ToWords();
+tes = 615432.ToWords();
+tes = 165432.ToWords();
+Console.WriteLine(tes);
+//var a = 5;
+//var b = "a";
+//int? c = 1;
+//string? d = "0";
+//NumberEx.IsNumberType(a).Log();
+//NumberEx.IsNumberType(b).Log();
+//NumberEx.IsNumberType(c).Log();
+//StringEx.IsNumeric(d).Log();
 
-var dic = new List<Dictionary<string, object?>>
-        {
-            new() { { "ID", 1 }, { "Name", "John" }, { "Age", 30 } },
-            new() { { "ID", 2 }, { "Name", "Alice" }, { "Age", 25 } },
-            new() { { "ID", 3 }, { "Name", "Bob" }, { "Age", null } }
-        };
-var table = dic.ToDataTable();
-var valueMap = table.ToList<TestTable>();
+//var dic = new List<Dictionary<string, object?>>
+//        {
+//            new() { { "ID", 1 }, { "Name", "John" }, { "Age", 30 } },
+//            new() { { "ID", 2 }, { "Name", "Alice" }, { "Age", 25 } },
+//            new() { { "ID", 3 }, { "Name", "Bob" }, { "Age", null } }
+//        };
+//var table = dic.ToDataTable();
+//var valueMap = table.ToList<TestTable>();
 
 //while (true)
 //{
