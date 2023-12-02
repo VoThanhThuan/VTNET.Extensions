@@ -128,8 +128,9 @@ namespace VTNET.Extensions
         {
             return string.Join(',', _operatorPriorityPlus);
         }
-        static double CalculateSimple(ref string strMath, Stack<double> values, Stack<string> operators)
+        static double CalculateSimple(ref string strMath, Stack<double> values, Stack<string> operators, CultureInfo? calculateCulture = null)
         {
+            calculateCulture ??= _calculateCulture;
             var stringValue = "";
             var isGroup = false;
             var result = 0.0d;
@@ -151,7 +152,7 @@ namespace VTNET.Extensions
                         isGroup = false;
                         if (!string.IsNullOrEmpty(stringValue))
                         {
-                            if (double.TryParse(stringValue, style: NumberStyles.Any, provider: _calculateCulture, out var num))
+                            if (double.TryParse(stringValue, style: NumberStyles.Any, provider: calculateCulture, out var num))
                             {
                                 values.Push(num);
                             }
@@ -163,7 +164,7 @@ namespace VTNET.Extensions
                         break;
                     case "!":
                         {
-                            if (double.TryParse(stringValue, style: NumberStyles.Any, provider: _calculateCulture, out var value))
+                            if (double.TryParse(stringValue, style: NumberStyles.Any, provider: calculateCulture, out var value))
                             {
                                 var fact = 1;
                                 for (var i = 2; i <= value; i++)
@@ -182,7 +183,7 @@ namespace VTNET.Extensions
                         break;
                     case "%":
                         {
-                            if (double.TryParse(stringValue, style: NumberStyles.Any, provider: _calculateCulture, out var value))
+                            if (double.TryParse(stringValue, style: NumberStyles.Any, provider: calculateCulture, out var value))
                             {
                                 value /= 100;
                                 values.Push(value);
@@ -200,7 +201,7 @@ namespace VTNET.Extensions
                             {
                                 if (!string.IsNullOrEmpty(stringValue))
                                 {
-                                    if (double.TryParse(stringValue, style: NumberStyles.Any, provider: _calculateCulture, out var num))
+                                    if (double.TryParse(stringValue, style: NumberStyles.Any, provider: calculateCulture, out var num))
                                     {
                                         values.Push(num);
                                     }
@@ -235,7 +236,7 @@ namespace VTNET.Extensions
             }
             if (!string.IsNullOrEmpty(stringValue))
             {
-                if (double.TryParse(stringValue, style: NumberStyles.Any, provider: _calculateCulture, out var num))
+                if (double.TryParse(stringValue, style: NumberStyles.Any, provider: calculateCulture, out var num))
                 {
                     values.Push(num);
                 }
@@ -254,8 +255,9 @@ namespace VTNET.Extensions
         /// <param name="input"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static double Calculate(this string input)
+        public static double Calculate(this string input, CultureInfo? calculateCulture = null)
         {
+            calculateCulture ??= _calculateCulture;
             var operators = new Stack<string>();
             var values = new Stack<double>();
 
@@ -282,7 +284,7 @@ namespace VTNET.Extensions
                             arg = arg[..^3];
                             isDeg = true;
                         }
-                        functionValid = double.TryParse(matchSI.Groups[1].Value, style: NumberStyles.Any, provider: _calculateCulture, out value);
+                        functionValid = double.TryParse(matchSI.Groups[1].Value, style: NumberStyles.Any, provider: calculateCulture, out value);
                     }                    
                     else if (!_FunctionExtensions.ContainsKey(function))
                     {
@@ -302,10 +304,10 @@ namespace VTNET.Extensions
                         }
                         else
                         {
-                            functionValid = double.TryParse(arg, style: NumberStyles.Any, provider: _calculateCulture, out value);
+                            functionValid = double.TryParse(arg, style: NumberStyles.Any, provider: calculateCulture, out value);
                             if (!functionValid)
                             {
-                                value = CalculateSimple(ref arg, values, operators);
+                                value = CalculateSimple(ref arg, values, operators, calculateCulture);
                                 if (!double.IsNaN(value))
                                 {
                                     functionValid = true;
@@ -360,7 +362,7 @@ namespace VTNET.Extensions
                             default:
                                 Stack<double> valuesClone = new Stack<double>(values);
                                 var valueArg = arg.Split(';')
-                                    .Select(item => double.TryParse(item, style: NumberStyles.Any, provider: _calculateCulture, out var num) ? num : CalculateSimple(ref item, valuesClone, operators))
+                                    .Select(item => double.TryParse(item, style: NumberStyles.Any, provider: calculateCulture, out var num) ? num : CalculateSimple(ref item, valuesClone, operators))
                                     .ToArray();
                                 CalculateFuntionCustom func = _FunctionExtensions[function];
                                 if (valueArg.Length < func.ParameterRequired)
@@ -384,12 +386,12 @@ namespace VTNET.Extensions
                 }
                 else
                 {                    
-                    CalculateSimple(ref input, values, operators);
+                    CalculateSimple(ref input, values, operators, calculateCulture);
                 }
             }
             if (!string.IsNullOrEmpty(stringValue))
             {
-                if (double.TryParse(stringValue, style: NumberStyles.Any, provider: _calculateCulture, out var num))
+                if (double.TryParse(stringValue, style: NumberStyles.Any, provider: calculateCulture, out var num))
                 {
                     values.Push(num);
                 }

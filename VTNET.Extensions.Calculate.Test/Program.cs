@@ -4,7 +4,6 @@ using System.Text.RegularExpressions;
 using VTNET.Extensions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-
 CalculateEx.AddSimpleFunction("addone", num =>
 {
     return ++num;
