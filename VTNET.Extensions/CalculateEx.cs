@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
-using VTNET.Extensions.Model;
+using VTNET.Extensions.Models;
 
 namespace VTNET.Extensions
 {
     public static class CalculateEx
     {
-        static HashSet<string> _functions = new HashSet<string> { "log", "log10", "sin", "cos", "tan", "sqrt", "abs", "%", "!" };
+        //static HashSet<string> _functions = new HashSet<string> { "log", "log10", "sin", "cos", "tan", "sqrt", "abs", "%", "!" };
         static Dictionary<string, int> _operatorPriority = new Dictionary<string, int> { { "^", 3 }, { "*", 2 }, { "/", 2 }, { "+", 1 }, { "-", 1 } };
         static Dictionary<string, int> _operatorPriorityPlus = new Dictionary<string, int>();
         static string _patternSI = @"(\d+)\s*(rad|deg)";

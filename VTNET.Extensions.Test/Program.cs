@@ -2,6 +2,7 @@
 using System.Text;
 using VTNET.Extensions;
 using VTNET.Extensions.Languages;
+using VTNET.Extensions.SupportFunctions;
 
 Console.OutputEncoding = Encoding.UTF8;
 StringEx.SetLanguageToWords(LangWords.VN);
@@ -10,17 +11,26 @@ StringEx.SetLanguageToWords(LangWords.VN);
 
 CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("vi-VN");
 
-var tes = 21.ToWords();
-tes = 321.ToWords();
-tes = 4321.ToWords();
-tes = 54321.ToWords();
-tes = 654321.ToWords();
-tes = 654312.ToWords();
-tes = 654132.ToWords();
-tes = 651432.ToWords();
-tes = 615432.ToWords();
-tes = 165432.ToWords();
-Console.WriteLine(tes);
+var function = StringAnalysis.Functions("testfunc(this is param){this is code}");//{FuncName: testfunc, Param: this is param, Code: this is code}
+var functionCall = StringAnalysis.FunctionsCall("testfunc1(param one)testfunc2(param two)");//[(testfunc1,param one), (testfunc2,param two)]
+var functionParams = StringAnalysis.FunctionParams("(param one)(param two)(param three)");//[param one, param two,param three]
+var replaceByLang = StringAnalysis.ReplaceByLanguage("vi(Tiếng Việt)en(Tiếng anh)");
+var replaceByFunc = StringAnalysis.ReplaceByFunc("the result of the calculation 3*6 is calc(3*6)","calc", data =>
+{
+    return data.Calculate().ToString();
+}); //the result of the calculation 3*6 is 18
+Console.WriteLine();
+//var tes = 21.ToWords();
+//tes = 321.ToWords();
+//tes = 4321.ToWords();
+//tes = 54321.ToWords();
+//tes = 654321.ToWords();
+//tes = 654312.ToWords();
+//tes = 654132.ToWords();
+//tes = 651432.ToWords();
+//tes = 615432.ToWords();
+//tes = 165432.ToWords();
+//Console.WriteLine(tes);
 //var a = 5;
 //var b = "a";
 //int? c = 1;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace VTNET.Extensions.Model
+namespace VTNET.Extensions.Models
 {
     public class CalculateFuntionCustom
     {

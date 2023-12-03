@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using VTNET.Extensions.EnumDefinition;
+﻿using System.Text.RegularExpressions;
 
-namespace VTNET.Extensions.Model
+namespace VTNET.Extensions.Models
 {
     public class OptionsContains
     {

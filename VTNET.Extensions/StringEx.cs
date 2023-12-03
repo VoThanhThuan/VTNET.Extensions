@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using VTNET.Extensions.Languages;
-using VTNET.Extensions.Model;
+using VTNET.Extensions.Models;
 using VTNET.Extensions.SupportFunctions;
 
 namespace VTNET.Extensions
@@ -363,6 +363,26 @@ namespace VTNET.Extensions
             char[] charArray = input.ToCharArray();
             Array.Reverse(charArray);
             return new string(charArray);
+        }
+
+        /// <summary>
+        /// cut the string according to capital letters 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string SplitCamelCase(string input)
+        {
+            StringBuilder result = new StringBuilder();
+            for (int i = 0; i < input.Length; i++)
+            {
+                char currentChar = input[i];
+                result.Append(currentChar);
+                if (i < input.Length - 1 && char.IsLower(currentChar) && char.IsUpper(input[i + 1]))
+                {
+                    result.Append(' ');
+                }
+            }
+            return result.ToString();
         }
     }
 }

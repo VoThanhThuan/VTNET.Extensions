@@ -184,3 +184,35 @@ class TestTable
     public string Age { get; set; } = "";
 }
 ```
+
+### String Analysis
+The `StringAnalysis` library provides powerful methods for identifying and manipulating patterns within strings, offering enhanced string processing capabilities. Below are examples of some key functions:
+#### 1. Function Extraction
+The `Functions` method extracts function information, including function name, parameters, and code block from the input string.
+```csharp
+var function = StringAnalysis.Functions("testfunc(this is param){this is code}");//{FuncName: testfunc, Param: this is param, Code: this is code}
+```
+#### 2. Function Call Extraction
+The `FunctionsCall` method retrieves function calls and their corresponding parameters from the input string.
+```csharp
+var functionCall = StringAnalysis.FunctionsCall("testfunc1(param one)testfunc2(param two)");//[(testfunc1,param one), (testfunc2,param two)]
+```
+#### 3. Function Parameters Extraction
+The `FunctionParams` method extracts parameters enclosed within parentheses from the input string.
+```csharp
+var functionParams = StringAnalysis.FunctionParams("(param one)(param two)(param three)");//[param one, param two,param three]
+```
+#### 4. Language-based Replacement
+The ReplaceByLanguage method performs language-based replacements in the input string. In the provided example, if the current display language is set to Vietnamese (vi-VN), the method will replace language codes with their corresponding values, returning "Tiếng Việt" as the result.
+```csharp
+var replaceByLang = StringAnalysis.ReplaceByLanguage("vi(Tiếng Việt)en(Tiếng anh)");// Example: If the current display language is vi-VN, the result will be "Tiếng Việt"
+```
+#### 5. Custom Function-based Replacement
+The ReplaceByFunc method enables custom replacements based on a specified function. In this example, it replaces occurrences of calc with the result of the provided calculation.
+```csharp
+var replaceByFunc = StringAnalysis.ReplaceByFunc("the result of the calculation 3*6 is calc(3*6)","calc", data =>
+{
+    return data.Calculate().ToString();
+}); //the result of the calculation 3*6 is 18
+```
+Feel free to explore the full range of functionalities offered by the StringAnalysis library to enhance your string processing tasks.
