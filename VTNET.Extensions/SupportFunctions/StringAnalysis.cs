@@ -71,7 +71,7 @@ namespace VTNET.Extensions.SupportFunctions
             }
             return list;
         }
-        public static List<FunctionStructure> Functions(string? data, string prefix = "", string customName = "")
+        public static List<FunctionStructure> Functions(string? data, string customName = "", string prefix = "")
         {
             if (data == null)
             {
