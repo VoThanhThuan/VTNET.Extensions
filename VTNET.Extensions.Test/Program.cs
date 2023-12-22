@@ -40,15 +40,18 @@ Console.WriteLine();
 //NumberEx.IsNumberType(c).Log();
 //StringEx.IsNumeric(d).Log();
 
-//var dic = new List<Dictionary<string, object?>>
-//        {
-//            new() { { "ID", 1 }, { "Name", "John" }, { "Age", 30 } },
-//            new() { { "ID", 2 }, { "Name", "Alice" }, { "Age", 25 } },
-//            new() { { "ID", 3 }, { "Name", "Bob" }, { "Age", null } }
-//        };
-//var table = dic.ToDataTable();
-//var valueMap = table.ToList<TestTable>();
-
+var dic = new List<Dictionary<string, object?>>
+        {
+            new() { { "ID", 1 }, { "Name", "John" }, { "Age", 30 } },
+            new() { { "ID", 2 }, { "Name", "Alice" }, { "Age", 25 } },
+            new() { { "ID", 3 }, { "Name", "Bob" }, { "Age", null } }
+        };
+var table = dic.ToDataTable();
+var valueMap = table.ToList<TestTable>();
+var valueMap1 = table.ToListWithActivator<TestTable>();
+var valueMap2 = table.ToListParallel<TestTable>();
+var valueMap3 = table.ToListCache<TestTable>();
+var a = "";
 //while (true)
 //{
 //    Console.WriteLine("Nhập số tiền: ");
@@ -101,7 +104,6 @@ class TestTable
 {
     [MapColumnName("Id")]
     public string Idx { get; set; } = "";
-    [IgnoreMapColumnName]
     public string Name { get; set; } = "";
     public string Age { get; set; } = "";
 }

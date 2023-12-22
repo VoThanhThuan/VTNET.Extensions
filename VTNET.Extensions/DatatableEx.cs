@@ -10,74 +10,67 @@ namespace VTNET.Extensions
 {
     public static class DatatableEx
     {
-        //public static List<T> ToList<T>(this DataTable table, bool matchCase = false) where T : new()
-        //{
-        //    var properties = typeof(T).GetProperties()
-        //        .ToDictionary(GetColumnName, prop => prop.Name, matchCase ? StringComparer.Ordinal : StringComparer.OrdinalIgnoreCase);
-
-        //    var list = table.AsEnumerable().Select(row =>
-        //    {
-        //        var item = new T();
-        //        foreach (DataColumn column in table.Columns)
-        //        {
-        //            if (properties.TryGetValue(column.ColumnName, out var propertyName) && row[column] != DBNull.Value)
-        //            {
-        //                var propertyInfo = typeof(T).GetProperty(propertyName);
-        //                propertyInfo?.SetValue(item, Convert.ChangeType(row[column], propertyInfo.PropertyType));
-        //            }
-        //        }
-        //        return item;
-        //    }).ToList();
-        //    return list;
-        //}
-        public static List<T> ToList<T>(this DataTable table, bool matchCase = false) where T : new()
+        static Dictionary<string, string> GetProperties<T>(bool matchCase = false)
         {
             var properties = typeof(T).GetProperties()
                 .Where(prop => prop.GetCustomAttribute<IgnoreMapColumnNameAttribute>() == null)
                 .ToDictionary(GetColumnName, prop => prop.Name, matchCase ? StringComparer.Ordinal : StringComparer.OrdinalIgnoreCase);
+            return properties;
+        }
+        static void Map<T>(DataTable table, Dictionary<string, string> properties, T item, DataRow row)
+        {
+            foreach (DataColumn column in table.Columns)
+            {
+                if (properties.TryGetValue(column.ColumnName, out var propertyName) && row[column] != DBNull.Value)
+                {
+                    var propertyInfo = typeof(T).GetProperty(propertyName);
+                    if (propertyInfo.PropertyType.IsGenericType && propertyInfo.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                    {
+                        Type underlyingType = Nullable.GetUnderlyingType(propertyInfo.PropertyType);
+                        propertyInfo.SetValue(item, Convert.ChangeType(row[column], underlyingType));
+                    }
+                    else
+                    {
+                        propertyInfo?.SetValue(item, Convert.ChangeType(row[column], propertyInfo.PropertyType));
+                    }
+                }
+            }
+        }
 
+        public static List<T> ToList<T>(this DataTable table, bool matchCase = false) where T : new()
+        {
+            var properties = GetProperties<T>(matchCase);
             var list = table.AsEnumerable().Select(row =>
             {
                 var item = new T();
-                foreach (DataColumn column in table.Columns)
-                {
-                    if (properties.TryGetValue(column.ColumnName, out var propertyName) && row[column] != DBNull.Value)
-                    {
-                        var propertyInfo = typeof(T).GetProperty(propertyName);
-                        if (propertyInfo.PropertyType.IsGenericType && propertyInfo.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
-                        {
-                            Type underlyingType = Nullable.GetUnderlyingType(propertyInfo.PropertyType);
-                            propertyInfo.SetValue(item, Convert.ChangeType(row[column], underlyingType));
-                        }
-                        else
-                        {
-                            propertyInfo?.SetValue(item, Convert.ChangeType(row[column], propertyInfo.PropertyType));
-                        }
-                    }
-                }
+                Map(table, properties, item, row);
                 return item;
             }).ToList();
             return list;
         }
 
-        public static List<T> ToListParallel<T>(this DataTable table) where T : new()
+        public static List<T> ToListWithActivator<T>(this DataTable table, bool matchCase = false)
+        {
+            var properties = GetProperties<T>(matchCase);
+
+            var list = table.AsEnumerable().Select(row =>
+            {
+                var item = (T)Activator.CreateInstance(typeof(T));
+                Map(table, properties, item, row);
+                return item;
+            }).ToList();
+            return list;
+        }
+
+        public static List<T> ToListParallel<T>(this DataTable table, bool matchCase = false) where T : new()
         {
             var list = new List<T>();
-            var properties = typeof(T).GetProperties()
-                .Where(prop => prop.GetCustomAttribute<IgnoreMapColumnNameAttribute>() == null)
-                .ToDictionary(prop => prop.GetCustomAttribute<MapColumnNameAttribute>()?.Name ?? prop.Name, prop => prop.Name);
+            var properties = GetProperties<T>(matchCase);
 
             _ = Parallel.ForEach(table.Rows.Cast<DataRow>(), row =>
             {
                 var item = new T();
-                foreach (DataColumn column in table.Columns)
-                {
-                    if (properties.TryGetValue(column.ColumnName, out var value) && row[column] != DBNull.Value)
-                    {
-                        var propertyInfo = typeof(T).GetProperty(value);
-                        propertyInfo?.SetValue(item, Convert.ChangeType(row[column], propertyInfo.PropertyType), null);
-                    }
-                }
+                Map(table, properties, item, row);
                 lock (list)
                 {
                     list.Add(item);
@@ -98,8 +91,17 @@ namespace VTNET.Extensions
                 {
                     if (properties.TryGetValue(column.ColumnName, out var property) && row[column] != DBNull.Value)
                     {
-                        var propertyInfo = properties[property.Property.Name];
-                        propertyInfo.Setter(item, Convert.ChangeType(row[column], property.Property.PropertyType));
+                        var propertyInfo = properties[column.ColumnName];
+                        if (propertyInfo.Property.PropertyType.IsGenericType && propertyInfo.Property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                        {
+                            Type underlyingType = Nullable.GetUnderlyingType(propertyInfo.Property.PropertyType);
+                            propertyInfo.Setter(item, Convert.ChangeType(row[column], underlyingType));
+                        }
+                        else
+                        {
+                            propertyInfo?.Setter(item, Convert.ChangeType(row[column], propertyInfo.Property.PropertyType));
+                        }
+
                     }
                 }
 
