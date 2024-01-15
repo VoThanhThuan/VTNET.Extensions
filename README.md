@@ -79,6 +79,9 @@ StringEx.SetLanguageToWords(LangWords.VN);
 "123abc".Contains(x => x.NumberOnly).Log(); //false
 "123abc".Contains(x => x.Number).Log(); //true
 
+//Simple algorithm for calculating string similarity
+var levenshtein = StringAnalysis.LevenshteinDistance("võ thành thuận", "võ thành thuặn");// 1
+
 ```
 
 ### Number

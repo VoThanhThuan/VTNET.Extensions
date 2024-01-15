@@ -10,6 +10,59 @@ namespace VTNET.Extensions
 {
     public static class DatatableEx
     {
+        public static T Cast<T>(this DataRow row) where T : new()
+        {
+            var data = new T();
+            var type = typeof(T);
+            var propertiesInfo = type.GetProperties().Where(prop => prop.GetCustomAttribute<IgnoreMapColumnNameAttribute>() == null);
+            foreach (var property in propertiesInfo)
+            {
+                var attribute = (MapColumnNameAttribute?)property.GetCustomAttribute(typeof(MapColumnNameAttribute));
+                var propertyName = attribute?.Name ?? property.Name;
+                var value = row[propertyName];
+                if (value != DBNull.Value)
+                {
+                    if (property.PropertyType.IsAssignableFrom(value.GetType()))
+                    {
+                        property.SetValue(data, value, null);
+                    }
+                    else
+                    {
+                        Type targetType = property.PropertyType;
+                        try
+                        {
+                            object convertedValue = Convert.ChangeType(value, targetType);
+                            property.SetValue(data, convertedValue, null);
+                        }
+                        catch (Exception)
+                        {
+                            // Handle the case where conversion is not possible
+                            if (Nullable.GetUnderlyingType(targetType) != null)
+                            {
+                                property.SetValue(data, null, null);
+                            }
+                            else
+                            {
+                                // Handle the case where conversion is not possible and the property is not nullable
+                                throw new InvalidOperationException($"Cannot convert data of type \"{value.GetType().Name}\" for  \"{value}\" into data of type \"{property.PropertyType.Name}\" for property '\"{typeof(T).FullName}.{property.Name}\".");
+                            }
+                        }
+                    }
+                }
+                else if (Nullable.GetUnderlyingType(property.PropertyType) != null)
+                {
+                    property.SetValue(data, null, null);
+                }
+
+            }
+            return data;
+        }
+        static string GetColumnName(PropertyInfo prop)
+        {
+            var columnNameAttribute = prop.GetCustomAttribute<MapColumnNameAttribute>();
+            return columnNameAttribute?.Name ?? prop.Name;
+        }
+
         static Dictionary<string, string> GetProperties<T>(bool matchCase = false)
         {
             var properties = typeof(T).GetProperties()
@@ -17,6 +70,36 @@ namespace VTNET.Extensions
                 .ToDictionary(GetColumnName, prop => prop.Name, matchCase ? StringComparer.Ordinal : StringComparer.OrdinalIgnoreCase);
             return properties;
         }
+
+        /// <summary>
+        /// Fast data type conversion, bypassing checks (vague error messages), in exchange for a faster speed for data type conversion.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="row"></param>
+        /// <returns></returns>
+        public static T CastFast<T>(this DataRow row) where T : new()
+        {
+            var data = new T();
+            var type = typeof(T);
+            var propertiesInfo = type.GetProperties().Where(prop => prop.GetCustomAttribute<IgnoreMapColumnNameAttribute>() == null);
+            foreach (var property in propertiesInfo)
+            {
+                var propertyName = GetColumnName(property);
+                var value = row[propertyName];
+                var propertyInfo = typeof(T).GetProperty(propertyName);
+                if (propertyInfo.PropertyType.IsGenericType && propertyInfo.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                {
+                    Type underlyingType = Nullable.GetUnderlyingType(propertyInfo.PropertyType);
+                    propertyInfo.SetValue(data, Convert.ChangeType(value, underlyingType));
+                }
+                else
+                {
+                    propertyInfo?.SetValue(data, Convert.ChangeType(value, propertyInfo.PropertyType));
+                }
+            }
+            return data;
+        }
+
         static void Map<T>(DataTable table, Dictionary<string, string> properties, T item, DataRow row)
         {
             foreach (DataColumn column in table.Columns)
@@ -128,11 +211,6 @@ namespace VTNET.Extensions
                 PropertyCache[key] = properties;
                 return properties;
             }
-        }
-        private static string GetColumnName(PropertyInfo prop)
-        {
-            var columnNameAttribute = prop.GetCustomAttribute<MapColumnNameAttribute>();
-            return columnNameAttribute?.Name ?? prop.Name;
         }
 
         private class PropertyInfoWrapper

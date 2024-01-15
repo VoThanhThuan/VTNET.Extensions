@@ -8,8 +8,9 @@ Console.OutputEncoding = Encoding.UTF8;
 StringEx.SetLanguageToWords(LangWords.VN);
 
 //var testToTitle = "NGAY lương".ToTitle(ignoreUpperCase:true);
-
 CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("vi-VN");
+
+var levenshtein = StringAnalysis.LevenshteinDistance("võ thành thuận", "võ thành thuặn");
 
 var function = StringAnalysis.Functions("testfunc(this is param){this is code}");//{FuncName: testfunc, Param: this is param, Code: this is code}
 var functionCall = StringAnalysis.FunctionsCall("testfunc1(param one)testfunc2(param two)");//[(testfunc1,param one), (testfunc2,param two)]
