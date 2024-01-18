@@ -2,12 +2,28 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 using VTNET.Extensions.Models;
 
 namespace VTNET.Extensions.SupportFunctions
 {
+    public class TextDifferenceInfo
+    {
+        public List<DifferenceInfo> CurrentInfo { get; set; } = new List<DifferenceInfo>();
+        public List<DifferenceInfo> DifferenceInfo { get; set; } = new List<DifferenceInfo>();
+    }
+    public struct DifferenceInfo
+    {
+        public char Character;
+        public int Position;
+
+        public DifferenceInfo(char character, int position)
+        {
+            Character = character;
+            Position = position;
+        }
+    }
+
     public static class StringAnalysis
     {
         static readonly string patternFunctionParams = @"\(((?>[^()\\]+|\\(\(|\\(?<DEPTH>)|\\(\)|\\)(?<-DEPTH>)|\\)(?!\\)|\\.|[^()]+)*)\)";
@@ -165,6 +181,53 @@ namespace VTNET.Extensions.SupportFunctions
                 }
             }
             return dp[s1.Length, s2.Length];
+        }
+
+        public static TextDifferenceInfo GetDifferences(string s1, string s2)
+        {
+            TextDifferenceInfo differences = new TextDifferenceInfo();
+
+            int[,] dp = new int[s1.Length + 1, s2.Length + 1];
+
+            for (int i = 0; i <= s1.Length; i++)
+            {
+                for (int j = 0; j <= s2.Length; j++)
+                {
+                    if (i == 0)
+                        dp[i, j] = j;
+                    else if (j == 0)
+                        dp[i, j] = i;
+                    else
+                        dp[i, j] = Math.Min(
+                            Math.Min(dp[i - 1, j] + 1, dp[i, j - 1] + 1),
+                            dp[i - 1, j - 1] + (s1[i - 1] == s2[j - 1] ? 0 : 1)
+                        );
+                }
+            }
+
+            int m = s1.Length;
+            int n = s2.Length;
+
+            while (m > 0 || n > 0)
+            {
+                if (m > 0 && n > 0 && s1[m - 1] == s2[n - 1])
+                {
+                    m--;
+                    n--;
+                }
+                else if (n > 0 && (m == 0 || dp[m, n - 1] <= dp[m - 1, n] && dp[m, n - 1] <= dp[m - 1, n - 1]))
+                {
+                    differences.DifferenceInfo.Add(new DifferenceInfo(s2[n - 1], m));
+                    n--;
+                }
+                else
+                {
+                    differences.CurrentInfo.Add(new DifferenceInfo(s1[m - 1], m - 1));
+                    m--;
+                }
+            }
+
+            return differences;
         }
     }
 }

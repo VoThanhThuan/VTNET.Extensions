@@ -241,7 +241,7 @@ namespace VTNET.Extensions
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        public static string ToTitle(this string text, bool ignoreUpperCase = true)
+        public static string ToTitle(this string text, bool ignoreUpperCase = false)
         {
             if (!ignoreUpperCase)
             {
@@ -251,7 +251,13 @@ namespace VTNET.Extensions
             if (text.Length == 1) return text.ToUpper();
             var cultureInfo = Thread.CurrentThread.CurrentCulture;
             var textInfo = cultureInfo.TextInfo;
-            return textInfo.ToTitleCase(text);
+            var textTitle = textInfo.ToTitleCase(text);
+            if (ignoreUpperCase)
+            {
+                // Giữ nguyên chữ in hoa của chuỗi ban đầu
+                textTitle = string.Join("", text.Zip(textTitle, (c1, c2) => char.IsUpper(c1) ? c1 : c2));
+            }
+            return textTitle;
         }
         [Obsolete("Replace with 'ToTitle'")]
         public static string Title(this string text) => ToTitle(text);

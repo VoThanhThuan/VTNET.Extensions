@@ -1,8 +1,5 @@
-﻿using System;
-using System.Globalization;
-using System.Text.RegularExpressions;
+﻿using System.Globalization;
 using VTNET.Extensions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 CalculateEx.AddSimpleFunction("addone", num =>
 {
@@ -26,6 +23,19 @@ CalculateEx.AddFunction("circleSum", (agrs, isDeg) =>
 CalculateEx.AddOperator('v', (a, b) =>
 {
    return Math.Pow(b, 1.0 / a);
+}, 3);
+
+CalculateEx.AddOperator('|', (a, b) =>
+{
+   return (int)a | (int)b;
+}, 3);
+CalculateEx.AddOperator('&', (a, b) =>
+{
+   return (int)a & (int)b;
+}, 3);
+CalculateEx.AddOperator('~', (a, b) =>
+{
+   return (int)a & (int)b;
 }, 3);
 
 
