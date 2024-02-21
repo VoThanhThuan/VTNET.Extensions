@@ -5,10 +5,10 @@ using VTNET.Extensions.Languages;
 using VTNET.Extensions.SupportFunctions;
 
 Console.OutputEncoding = Encoding.UTF8;
-StringEx.SetLanguageToWords(LangWords.VN);
+//StringEx.SetLanguageToWords(LangWords.VN);
 
 CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("vi-VN");
-
+var test = double.Parse("1.234,56");
 var levenshtein = StringAnalysis.GetDifferences("võ thành thuận", "võ thành Thuặn");
 
 var function = StringAnalysis.Functions("testfunc(this is param){this is code}");//{FuncName: testfunc, Param: this is param, Code: this is code}

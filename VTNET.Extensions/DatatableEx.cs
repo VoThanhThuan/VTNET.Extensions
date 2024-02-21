@@ -87,10 +87,18 @@ namespace VTNET.Extensions
                 var propertyName = GetColumnName(property);
                 var value = row[propertyName];
                 var propertyInfo = typeof(T).GetProperty(propertyName);
+                if (propertyInfo is null) continue;
                 if (propertyInfo.PropertyType.IsGenericType && propertyInfo.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
-                    Type underlyingType = Nullable.GetUnderlyingType(propertyInfo.PropertyType);
-                    propertyInfo.SetValue(data, Convert.ChangeType(value, underlyingType));
+                    var underlyingType = Nullable.GetUnderlyingType(propertyInfo.PropertyType);
+                    if (underlyingType is null)
+                    {
+                        propertyInfo.SetValue(data, value);
+                    }
+                    else
+                    {
+                        propertyInfo.SetValue(data, Convert.ChangeType(value, underlyingType));
+                    }
                 }
                 else
                 {
@@ -107,10 +115,18 @@ namespace VTNET.Extensions
                 if (properties.TryGetValue(column.ColumnName, out var propertyName) && row[column] != DBNull.Value)
                 {
                     var propertyInfo = typeof(T).GetProperty(propertyName);
+                    if (propertyInfo is null) continue;
                     if (propertyInfo.PropertyType.IsGenericType && propertyInfo.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
                     {
-                        Type underlyingType = Nullable.GetUnderlyingType(propertyInfo.PropertyType);
-                        propertyInfo.SetValue(item, Convert.ChangeType(row[column], underlyingType));
+                        var underlyingType = Nullable.GetUnderlyingType(propertyInfo.PropertyType);
+                        if(underlyingType is null)
+                        {
+                            propertyInfo.SetValue(item, row[column]);
+                        }
+                        else
+                        {
+                            propertyInfo.SetValue(item, Convert.ChangeType(row[column], underlyingType));
+                        }
                     }
                     else
                     {
@@ -132,13 +148,13 @@ namespace VTNET.Extensions
             return list;
         }
 
-        public static List<T> ToListWithActivator<T>(this DataTable table, bool matchCase = false)
+        public static List<T?> ToListWithActivator<T>(this DataTable table, bool matchCase = false)
         {
             var properties = GetProperties<T>(matchCase);
 
             var list = table.AsEnumerable().Select(row =>
             {
-                var item = (T)Activator.CreateInstance(typeof(T));
+                var item = (T?)Activator.CreateInstance(typeof(T));
                 Map(table, properties, item, row);
                 return item;
             }).ToList();
@@ -242,7 +258,7 @@ namespace VTNET.Extensions
 
         private static readonly Dictionary<string, Dictionary<string, PropertyInfoWrapper>> PropertyCache = new Dictionary<string, Dictionary<string, PropertyInfoWrapper>>();
 
-        public static List<Dictionary<string, object>> ToListDictionary(this DataTable dataTable)
+        public static List<Dictionary<string, object>> ToListDictionary(this DataTable dataTable, Func<string, string> formatName)
         {
             //var dictionary = new Dictionary<string, object>();
 
@@ -289,5 +305,29 @@ namespace VTNET.Extensions
             }
             return dataTable;
         }
+
+        public static object? GetValue(this DataRow row, string ColumnName)
+        {
+            var data = row[ColumnName];
+            return GetValue<object>(data);
+        }
+        public static T? GetValue<T>(this DataRow row, string ColumnName)
+        {
+            var data = row[ColumnName];
+            return GetValue<T>(data);
+        }
+        public static T? GetValue<T>(object? data)
+        {
+            return data is null || data is DBNull ? default : (T)data;
+        }
+        public static void SetValue(this DataRow row, string ColumnName, object? data)
+        {
+            row[ColumnName] = GetDbValue(data);
+        }
+        public static object GetDbValue(object? data)
+        {
+            return data is null ? DBNull.Value : data;
+        }
+
     }
 }

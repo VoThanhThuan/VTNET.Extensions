@@ -2,7 +2,7 @@
 
 namespace VTNET.Extensions.Models
 {
-    public class OptionsContains
+    public partial class OptionsContains
     {
         private readonly string text;
 
@@ -12,9 +12,18 @@ namespace VTNET.Extensions.Models
         }   
 
         // Thêm các phương thức options khác tại đây (nếu cần)
-        public bool Number { get => Regex.IsMatch(text, @"\d"); }
-        public bool NumberOnly { get => Regex.IsMatch(text, @"^\d+$"); }
-        public bool Text { get => Regex.IsMatch(text, @"\D"); }
-        public bool TextOnly { get => Regex.IsMatch(text, @"^\D+$"); }
+        public bool Number { get => RegexNumber().IsMatch(text); }
+        public bool NumberOnly { get => RegexNumberOnly().IsMatch(text); }
+        public bool Text { get => RegexText().IsMatch(text); }
+        public bool TextOnly { get => RegexTextOnly().IsMatch(text); }
+
+        [GeneratedRegex("\\d")]
+        private static partial Regex RegexNumber();
+        [GeneratedRegex("^\\d+$")]
+        private static partial Regex RegexNumberOnly();
+        [GeneratedRegex("\\D")]
+        private static partial Regex RegexText();
+        [GeneratedRegex("^\\D+$")]
+        private static partial Regex RegexTextOnly();
     }
 }

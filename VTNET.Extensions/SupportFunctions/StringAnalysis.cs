@@ -9,8 +9,12 @@ namespace VTNET.Extensions.SupportFunctions
 {
     public class TextDifferenceInfo
     {
-        public List<DifferenceInfo> CurrentInfo { get; set; } = new List<DifferenceInfo>();
-        public List<DifferenceInfo> DifferenceInfo { get; set; } = new List<DifferenceInfo>();
+        public List<DifferenceInfo> InfoA { get; set; } = new List<DifferenceInfo>();
+        public List<DifferenceInfo> InfoB { get; set; } = new List<DifferenceInfo>();
+        [Obsolete("use InfoA")]
+        public List<DifferenceInfo> CurrentInfo => InfoA;
+        [Obsolete("use InfoB")]
+        public List<DifferenceInfo> DifferenceInfo => InfoB;
     }
     public struct DifferenceInfo
     {
@@ -161,13 +165,13 @@ namespace VTNET.Extensions.SupportFunctions
             return result;
         }
 
-        public static int LevenshteinDistance(string s1, string s2)
+        public static int LevenshteinDistance(string stringA, string stringB)
         {
-            int[,] dp = new int[s1.Length + 1, s2.Length + 1];
+            int[,] dp = new int[stringA.Length + 1, stringB.Length + 1];
 
-            for (int i = 0; i <= s1.Length; i++)
+            for (int i = 0; i <= stringA.Length; i++)
             {
-                for (int j = 0; j <= s2.Length; j++)
+                for (int j = 0; j <= stringB.Length; j++)
                 {
                     if (i == 0)
                         dp[i, j] = j;
@@ -176,22 +180,22 @@ namespace VTNET.Extensions.SupportFunctions
                     else
                         dp[i, j] = Math.Min(
                             Math.Min(dp[i - 1, j] + 1, dp[i, j - 1] + 1),
-                            dp[i - 1, j - 1] + (s1[i - 1] == s2[j - 1] ? 0 : 1)
+                            dp[i - 1, j - 1] + (stringA[i - 1] == stringB[j - 1] ? 0 : 1)
                         );
                 }
             }
-            return dp[s1.Length, s2.Length];
+            return dp[stringA.Length, stringB.Length];
         }
 
-        public static TextDifferenceInfo GetDifferences(string s1, string s2)
+        public static TextDifferenceInfo GetDifferences(string stringA, string stringB)
         {
             TextDifferenceInfo differences = new TextDifferenceInfo();
 
-            int[,] dp = new int[s1.Length + 1, s2.Length + 1];
+            int[,] dp = new int[stringA.Length + 1, stringB.Length + 1];
 
-            for (int i = 0; i <= s1.Length; i++)
+            for (int i = 0; i <= stringA.Length; i++)
             {
-                for (int j = 0; j <= s2.Length; j++)
+                for (int j = 0; j <= stringB.Length; j++)
                 {
                     if (i == 0)
                         dp[i, j] = j;
@@ -200,29 +204,29 @@ namespace VTNET.Extensions.SupportFunctions
                     else
                         dp[i, j] = Math.Min(
                             Math.Min(dp[i - 1, j] + 1, dp[i, j - 1] + 1),
-                            dp[i - 1, j - 1] + (s1[i - 1] == s2[j - 1] ? 0 : 1)
+                            dp[i - 1, j - 1] + (stringA[i - 1] == stringB[j - 1] ? 0 : 1)
                         );
                 }
             }
 
-            int m = s1.Length;
-            int n = s2.Length;
+            int m = stringA.Length;
+            int n = stringB.Length;
 
             while (m > 0 || n > 0)
             {
-                if (m > 0 && n > 0 && s1[m - 1] == s2[n - 1])
+                if (m > 0 && n > 0 && stringA[m - 1] == stringB[n - 1])
                 {
                     m--;
                     n--;
                 }
                 else if (n > 0 && (m == 0 || dp[m, n - 1] <= dp[m - 1, n] && dp[m, n - 1] <= dp[m - 1, n - 1]))
                 {
-                    differences.DifferenceInfo.Add(new DifferenceInfo(s2[n - 1], m));
+                    differences.InfoB.Add(new DifferenceInfo(stringB[n - 1], m));
                     n--;
                 }
                 else
                 {
-                    differences.CurrentInfo.Add(new DifferenceInfo(s1[m - 1], m - 1));
+                    differences.InfoA.Add(new DifferenceInfo(stringA[m - 1], m - 1));
                     m--;
                 }
             }
