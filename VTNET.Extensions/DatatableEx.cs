@@ -148,13 +148,13 @@ namespace VTNET.Extensions
             return list;
         }
 
-        public static List<T?> ToListWithActivator<T>(this DataTable table, bool matchCase = false)
+        public static List<T> ToListWithActivator<T>(this DataTable table, bool matchCase = false)
         {
             var properties = GetProperties<T>(matchCase);
 
             var list = table.AsEnumerable().Select(row =>
             {
-                var item = (T?)Activator.CreateInstance(typeof(T));
+                var item = (T)Activator.CreateInstance(typeof(T))!;
                 Map(table, properties, item, row);
                 return item;
             }).ToList();
@@ -193,7 +193,7 @@ namespace VTNET.Extensions
                         var propertyInfo = properties[column.ColumnName];
                         if (propertyInfo.Property.PropertyType.IsGenericType && propertyInfo.Property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
                         {
-                            Type underlyingType = Nullable.GetUnderlyingType(propertyInfo.Property.PropertyType);
+                            Type underlyingType = Nullable.GetUnderlyingType(propertyInfo.Property.PropertyType)!;
                             propertyInfo.Setter(item, Convert.ChangeType(row[column], underlyingType));
                         }
                         else
@@ -245,7 +245,7 @@ namespace VTNET.Extensions
                 var instance = Expression.Parameter(typeof(object), "instance");
                 var value = Expression.Parameter(typeof(object), "value");
 
-                var castInstance = Expression.Convert(instance, propertyInfo.DeclaringType);
+                var castInstance = Expression.Convert(instance, propertyInfo.DeclaringType!);
                 var castValue = Expression.Convert(value, propertyInfo.PropertyType);
                 var property = Expression.Property(castInstance, propertyInfo);
                 var assign = Expression.Assign(property, castValue);
@@ -258,17 +258,21 @@ namespace VTNET.Extensions
 
         private static readonly Dictionary<string, Dictionary<string, PropertyInfoWrapper>> PropertyCache = new Dictionary<string, Dictionary<string, PropertyInfoWrapper>>();
 
-        public static List<Dictionary<string, object>> ToListDictionary(this DataTable dataTable, Func<string, string> formatName)
+        public static List<Dictionary<string, object>> ToListDictionary(this DataTable dataTable, Func<string, string>? formatName = null)
         {
             //var dictionary = new Dictionary<string, object>();
-
+            Func<string, string> _formatName = (string name) => name;
+            if(formatName is not null)
+            {
+                _formatName = formatName;
+            }
             var dataList = new List<Dictionary<string, object>>();
             foreach (DataRow row in dataTable.Rows)
             {
                 var data = new Dictionary<string, object>();
                 foreach (DataColumn col in dataTable.Columns)
                 {
-                    data[col.ColumnName] = row[col];
+                    data[_formatName(col.ColumnName)] = row[col];
                 }
                 dataList.Add(data);
             }
@@ -315,6 +319,11 @@ namespace VTNET.Extensions
         {
             var data = row[ColumnName];
             return GetValue<T>(data);
+        }
+        public static string GetStringValue(this DataRow row, string ColumnName)
+        {
+            var data = row[ColumnName];
+            return GetValue<string>(data)??"";
         }
         public static T? GetValue<T>(object? data)
         {

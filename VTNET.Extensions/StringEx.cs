@@ -63,11 +63,11 @@ namespace VTNET.Extensions
             }
             if (thousandSeparator != null)
             {
-                input = input.Replace(thousandSeparator.ToString(), "");
+                input = input.Replace(thousandSeparator.ToString()!, "");
             }
             if (decimalDigits != null)
             {
-                input = input.Replace(decimalDigits.ToString(), ".");
+                input = input.Replace(decimalDigits.ToString()!, ".");
             }
             string pattern = @"^-?\d*\.?\d+$";
             return Regex.IsMatch(input, pattern);

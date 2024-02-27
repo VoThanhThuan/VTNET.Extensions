@@ -218,4 +218,21 @@ var replaceByFunc = StringAnalysis.ReplaceByFunc("the result of the calculation 
     return data.Calculate().ToString();
 }); //the result of the calculation 3*6 is 18
 ```
+### TypeEx
+TypeEx adds a few small extensions to help make data processing simpler.
+```csharp
+    var defaultValue = typeof(T).GetDefaultValue(); //T is generic type
+```
+
+### DataRow (DataTableEx)
+The extensions (Get, Set) for DataRow will help you simplify retrieving data and assigning data to DataRow. You no longer have to handle null and DBNull cases yourself, making the code more compact.
+```csharp
+    var row = DataTable.Rows[0];
+    var val1 = row.GetValue<int>("id");
+    var val2 = row.GetStringValue("name");
+    row.SetValue("name", "vothuan");
+```
 Feel free to explore the full range of functionalities offered by the StringAnalysis library to enhance your string processing tasks.
+
+V2 for standard 2.1
+v7 for .NET7
