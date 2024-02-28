@@ -331,7 +331,11 @@ namespace VTNET.Extensions
         }
         public static void SetValue(this DataRow row, string ColumnName, object? data)
         {
-            row[ColumnName] = GetDbValue(data);
+            var valSet = GetDbValue(data);
+            if (!row[ColumnName].Equals(valSet))
+            {
+                row[ColumnName] = valSet;
+            }
         }
         public static object GetDbValue(object? data)
         {

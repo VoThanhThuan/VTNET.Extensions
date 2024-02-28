@@ -234,5 +234,5 @@ The extensions (Get, Set) for DataRow will help you simplify retrieving data and
 ```
 Feel free to explore the full range of functionalities offered by the StringAnalysis library to enhance your string processing tasks.
 
-V2 for standard 2.1
+v2 for standard 2.1
 v7 for .NET7

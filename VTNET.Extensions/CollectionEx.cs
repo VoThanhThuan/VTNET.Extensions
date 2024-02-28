@@ -22,7 +22,7 @@ namespace VTNET.Extensions
         {
             List<List<T>> result = new List<List<T>>();
             List<T> sublist = new List<T>();
-            U defaultValue = default;
+            U defaultValue = default!;
             foreach (T item in list)
             {
                 U fieldValue = selector(item);
@@ -54,7 +54,7 @@ namespace VTNET.Extensions
         /// <param name="selector"></param>
         public static List<List<T>> Split<T>(this List<T> list, T selector)
         {
-            return list.Split(selector: x => x.Equals(selector));
+            return list.Split(selector: x => x!.Equals(selector));
         }
 
     }
