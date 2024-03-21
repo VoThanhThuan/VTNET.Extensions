@@ -3,17 +3,14 @@
 namespace VTNET.Extensions
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public class MapColumnNameAttribute : Attribute
+    public class MapColumnNameAttribute : MapNameAttribute
     {
-        public string Name { get; private set; }
-
-        public MapColumnNameAttribute(string name)
+        public MapColumnNameAttribute(string name) : base(name)
         {
-            Name = name;
         }
     }
     [AttributeUsage(AttributeTargets.Property)]
-    public class IgnoreMapColumnNameAttribute : Attribute
+    public class IgnoreMapColumnNameAttribute : IgnoreMapNameAttribute
     {
     }
 }

@@ -14,10 +14,10 @@ namespace VTNET.Extensions
         {
             var data = new T();
             var type = typeof(T);
-            var propertiesInfo = type.GetProperties().Where(prop => prop.GetCustomAttribute<IgnoreMapColumnNameAttribute>() == null);
+            var propertiesInfo = type.GetProperties().Where(prop => prop.GetCustomAttribute<IgnoreMapNameAttribute>() == null);
             foreach (var property in propertiesInfo)
             {
-                var attribute = (MapColumnNameAttribute?)property.GetCustomAttribute(typeof(MapColumnNameAttribute));
+                var attribute = (MapNameAttribute?)property.GetCustomAttribute(typeof(MapNameAttribute));
                 var propertyName = attribute?.Name ?? property.Name;
                 var value = row[propertyName];
                 if (value != DBNull.Value)
@@ -44,7 +44,7 @@ namespace VTNET.Extensions
                             else
                             {
                                 // Handle the case where conversion is not possible and the property is not nullable
-                                throw new InvalidOperationException($"Cannot convert data of type \"{value.GetType().Name}\" for  \"{value}\" into data of type \"{property.PropertyType.Name}\" for property '\"{typeof(T).FullName}.{property.Name}\".");
+                                throw new InvalidOperationException($"Cannot convert value \"{value}\" of type \"{value.GetType().Name}\" to data of type \"{property.PropertyType.Name}\" for property \"{typeof(T).FullName}.{property.Name}\".");
                             }
                         }
                     }
@@ -59,14 +59,14 @@ namespace VTNET.Extensions
         }
         static string GetColumnName(PropertyInfo prop)
         {
-            var columnNameAttribute = prop.GetCustomAttribute<MapColumnNameAttribute>();
+            var columnNameAttribute = prop.GetCustomAttribute<MapNameAttribute>();
             return columnNameAttribute?.Name ?? prop.Name;
         }
 
-        static Dictionary<string, string> GetProperties<T>(bool matchCase = false)
+        internal static Dictionary<string, string> GetProperties<T>(bool matchCase = false)
         {
             var properties = typeof(T).GetProperties()
-                .Where(prop => prop.GetCustomAttribute<IgnoreMapColumnNameAttribute>() == null)
+                .Where(prop => prop.GetCustomAttribute<IgnoreMapNameAttribute>() == null)
                 .ToDictionary(GetColumnName, prop => prop.Name, matchCase ? StringComparer.Ordinal : StringComparer.OrdinalIgnoreCase);
             return properties;
         }
@@ -81,7 +81,7 @@ namespace VTNET.Extensions
         {
             var data = new T();
             var type = typeof(T);
-            var propertiesInfo = type.GetProperties().Where(prop => prop.GetCustomAttribute<IgnoreMapColumnNameAttribute>() == null);
+            var propertiesInfo = type.GetProperties().Where(prop => prop.GetCustomAttribute<IgnoreMapNameAttribute>() == null);
             foreach (var property in propertiesInfo)
             {
                 var propertyName = GetColumnName(property);
@@ -221,7 +221,7 @@ namespace VTNET.Extensions
             else
             {
                 var properties = typeof(T).GetProperties()
-                    .Where(prop => prop.GetCustomAttribute<IgnoreMapColumnNameAttribute>() == null)
+                    .Where(prop => prop.GetCustomAttribute<IgnoreMapNameAttribute>() == null)
                     .ToDictionary(GetColumnName, prop => new PropertyInfoWrapper(prop), matchCase ? StringComparer.Ordinal : StringComparer.OrdinalIgnoreCase);
 
                 PropertyCache[key] = properties;

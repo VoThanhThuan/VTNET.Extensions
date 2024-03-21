@@ -6,20 +6,27 @@ using VTNET.Extensions.SupportFunctions;
 
 Console.OutputEncoding = Encoding.UTF8;
 //StringEx.SetLanguageToWords(LangWords.VN);
-
-CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("vi-VN");
-var test = double.Parse("1.234,56");
-var levenshtein = StringAnalysis.GetDifferences("võ thành thuận", "võ thành Thuặn");
-
-var function = StringAnalysis.Functions("testfunc(this is param){this is code}");//{FuncName: testfunc, Param: this is param, Code: this is code}
-var functionCall = StringAnalysis.FunctionsCall("testfunc1(param one)testfunc2(param two)");//[(testfunc1,param one), (testfunc2,param two)]
-var functionParams = StringAnalysis.FunctionParams("(param one)(param two)(param three)");//[param one, param two,param three]
-var replaceByLang = StringAnalysis.ReplaceByLanguage("vi(Tiếng Việt)en(Tiếng anh)");
-var replaceByFunc = StringAnalysis.ReplaceByFunc("the result of the calculation 3*6 is calc(3*6)","calc", data =>
+var testTable = new TestTable()
 {
-    return data.Calculate().ToString();
-}); //the result of the calculation 3*6 is 18
-Console.WriteLine();
+    Idx = "1",
+    Name = "Test",
+    Age = "69"
+};
+var testClone = testTable.Map<TestMap>();
+testClone.Ten = "hahaha";
+CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("vi-VN");
+//var test = double.Parse("1.234,56");
+//var levenshtein = StringAnalysis.GetDifferences("võ thành thuận", "võ thành Thuặn");
+
+//var function = StringAnalysis.Functions("testfunc(this is param){this is code}");//{FuncName: testfunc, Param: this is param, Code: this is code}
+//var functionCall = StringAnalysis.FunctionsCall("testfunc1(param one)testfunc2(param two)");//[(testfunc1,param one), (testfunc2,param two)]
+//var functionParams = StringAnalysis.FunctionParams("(param one)(param two)(param three)");//[param one, param two,param three]
+//var replaceByLang = StringAnalysis.ReplaceByLanguage("vi(Tiếng Việt)en(Tiếng anh)");
+//var replaceByFunc = StringAnalysis.ReplaceByFunc("the result of the calculation 3*6 is calc(3*6)","calc", data =>
+//{
+//    return data.Calculate().ToString();
+//}); //the result of the calculation 3*6 is 18
+//Console.WriteLine();
 //var tes = 21.ToWords();
 //tes = 321.ToWords();
 //tes = 4321.ToWords();
@@ -40,18 +47,19 @@ Console.WriteLine();
 //NumberEx.IsNumberType(c).Log();
 //StringEx.IsNumeric(d).Log();
 
-var dic = new List<Dictionary<string, object?>>
-        {
-            new() { { "ID", 1 }, { "Name", "John" }, { "Age", 30 } },
-            new() { { "ID", 2 }, { "Name", "Alice" }, { "Age", 25 } },
-            new() { { "ID", 3 }, { "Name", "Bob" }, { "Age", null } }
-        };
-var table = dic.ToDataTable();
-var valueMap = table.ToList<TestTable>();
-var valueMap1 = table.ToListWithActivator<TestTable>();
-var valueMap2 = table.ToListParallel<TestTable>();
-var valueMap3 = table.ToListCache<TestTable>();
-var a = "";
+//var dic = new List<Dictionary<string, object?>>
+//        {
+//            new() { { "ID", 1 }, { "Name", "John" }, { "Age", 30 } },
+//            new() { { "ID", 2 }, { "Name", "Alice" }, { "Age", 25 } },
+//            new() { { "ID", 3 }, { "Name", "Bob" }, { "Age", null } }
+//        };
+//var table = dic.ToDataTable();
+//var valueCast = table.Rows[0].Cast<TestTable>();
+//var valueMap = table.ToList<TestTable>();
+//var valueMap1 = table.ToListWithActivator<TestTable>();
+//var valueMap2 = table.ToListParallel<TestTable>();
+//var valueMap3 = table.ToListCache<TestTable>();
+//var a = "";
 //while (true)
 //{
 //    Console.WriteLine("Nhập số tiền: ");
@@ -106,4 +114,13 @@ class TestTable
     public string Idx { get; set; } = "";
     public string Name { get; set; } = "";
     public string Age { get; set; } = "";
+}
+class TestMap
+{
+    [MapColumnName("Id")]
+    public string Ma { get; set; } = "";
+    [MapName("Name")]
+    public string Ten { get; set; } = "";
+    public string Age { get; set; } = "";
+
 }
