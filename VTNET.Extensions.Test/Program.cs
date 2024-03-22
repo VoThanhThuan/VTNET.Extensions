@@ -6,6 +6,12 @@ using VTNET.Extensions.SupportFunctions;
 
 Console.OutputEncoding = Encoding.UTF8;
 //StringEx.SetLanguageToWords(LangWords.VN);
+CalculateEx.AddVariable("mot", 1);
+CalculateEx.AddVariable("hai", 2);
+CalculateEx.AddVariable("ba", 3);
+CalculateEx.AddVariable("bay", 7);
+var result = "mot + hai * (ba + bay)".Calculate();
+
 var testTable = new TestTable()
 {
     Idx = "1",

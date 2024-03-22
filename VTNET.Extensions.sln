@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VTNET.Extensions", "VTNET.E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VTNET.Extensions.Test", "VTNET.Extensions.Test\VTNET.Extensions.Test.csproj", "{D2E17558-C7A4-4F04-8B1A-27E8E41E3D68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VTNET.Extensions.Calculate.Test", "VTNET.Extensions.Calculate.Test\VTNET.Extensions.Calculate.Test.csproj", "{10052E54-89D7-474B-9060-27B5F038ED33}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VTNET.Extensions.Calculate.Test", "VTNET.Extensions.Calculate.Test\VTNET.Extensions.Calculate.Test.csproj", "{7BCE2799-3CC7-4539-BA9A-951CD05C8F57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{D2E17558-C7A4-4F04-8B1A-27E8E41E3D68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2E17558-C7A4-4F04-8B1A-27E8E41E3D68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2E17558-C7A4-4F04-8B1A-27E8E41E3D68}.Release|Any CPU.Build.0 = Release|Any CPU
-		{10052E54-89D7-474B-9060-27B5F038ED33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{10052E54-89D7-474B-9060-27B5F038ED33}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{10052E54-89D7-474B-9060-27B5F038ED33}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{10052E54-89D7-474B-9060-27B5F038ED33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BCE2799-3CC7-4539-BA9A-951CD05C8F57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BCE2799-3CC7-4539-BA9A-951CD05C8F57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BCE2799-3CC7-4539-BA9A-951CD05C8F57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BCE2799-3CC7-4539-BA9A-951CD05C8F57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

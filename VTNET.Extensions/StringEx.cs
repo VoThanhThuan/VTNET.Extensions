@@ -218,6 +218,22 @@ namespace VTNET.Extensions
             return text;
         }
 
+
+        /// <summary>
+        /// Remove white space
+        /// <para>For example: "Here    Is    An     Example"</para>
+        /// </summary>
+        /// <param name="text">"HereIsAnExample"</param>
+        /// <returns></returns>
+        public static string RemoveSpaces(this string text)
+        {
+            text = RemoveDuplicateSpaces(text);
+            if (string.IsNullOrEmpty(text)) return text;
+            while (text.Contains(" "))
+                text = text.Replace(" ", "");
+            return text;
+        }
+
         /// <summary>
         /// Capitalize first letter
         /// </summary>

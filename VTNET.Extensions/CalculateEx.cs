@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using VTNET.Extensions.Models;
 
@@ -9,22 +10,47 @@ namespace VTNET.Extensions
 {
     public static class CalculateEx
     {
-        //static HashSet<string> _functions = new HashSet<string> { "log", "log10", "sin", "cos", "tan", "sqrt", "abs", "%", "!" };
-        static Dictionary<string, int> _operatorPriority = new Dictionary<string, int> { { "^", 3 }, { "*", 2 }, { "/", 2 }, { "+", 1 }, { "-", 1 } };
-        static Dictionary<string, int> _operatorPriorityPlus = new Dictionary<string, int>();
+        static Dictionary<string, int> _operatorPriority = new() { { "^", 3 }, { "*", 2 }, { "/", 2 }, { "+", 1 }, { "-", 1 } };
+        static Dictionary<string, int> _operatorPriorityPlus = new();
         static string _patternSI = @"(\d+)\s*(rad|deg)";
         static string _patternNumber = @"(?:[^()]+|\((?:[^()]+|\([^()]\))\))";
-        //static string _patternFunction = $"(?<function>{string.Join("|", _functions)})";
         static string _patternFunction = $@"(?<function>\w+)";
         static string _patternArg = $"(?<arg>{_patternNumber}+)";
         static string _variables = $"(?<var>pi|e)";
         static string _pattern = $"^{_patternFunction}\\({_patternArg}\\)|{_variables}";
         static string _patterns = $"{_patternFunction}\\({_patternArg}\\)|{_variables}";
-        static Dictionary<string, CalculateFuntionCustom> _FunctionExtensions = new Dictionary<string, CalculateFuntionCustom>();
-        static Dictionary<string, Func<double, double, double>> _FunctionOperators = new Dictionary<string, Func<double, double, double>>();
+        static Dictionary<string, CalculateFuntionCustom> _FunctionExtensions = new();
+        static Dictionary<string, Func<double, double, double>> _FunctionOperators = new();
+        static Dictionary<string, double> _VariablesDefine = new() { { "pi", Math.PI}, { "e", Math.E} };
+        static List<string> _VariablesOrder = new() { "pi", "e" };
         static CultureInfo _calculateCulture = CultureInfo.InvariantCulture;
         public static CultureInfo Culture { get => _calculateCulture; set => _calculateCulture = value; }
 
+        static string VaribaleBuilder()
+        {
+            var list = new List<string>() { "(?<var>" };
+            foreach (var item in _VariablesDefine)
+            {
+                list.Add(item.Key);
+            }
+            list.Add(")");
+            return "|".Join(list);
+        }
+        public static void AddVariable(string key, double value)
+        {
+            _VariablesDefine.Add(key, value);
+            _VariablesOrder.Add(key);
+            _VariablesOrder.Sort((a, b) => b.CompareTo(a));
+            _variables = VaribaleBuilder();
+        }
+        static string ReplaceVariable(string input, CultureInfo calculateCulture)
+        {
+            foreach (var key in _VariablesOrder)
+            {
+                input = input.Replace(key, _VariablesDefine[key].ToString(calculateCulture));
+            }
+            return input;
+        }
         /// <summary>
         /// Add your own custom function.
         /// <code>
@@ -155,6 +181,7 @@ namespace VTNET.Extensions
                             if (double.TryParse(stringValue, style: NumberStyles.Any, provider: calculateCulture, out var num))
                             {
                                 values.Push(num);
+                                stringValue = "";
                             }
                         }
                         while (values.Count > 1 && operators.Count > 0)
@@ -258,6 +285,8 @@ namespace VTNET.Extensions
         public static double Calculate(this string input, CultureInfo? calculateCulture = null)
         {
             calculateCulture ??= _calculateCulture;
+            input = ReplaceVariable(input, calculateCulture);
+            input = input.RemoveSpaces();
             var operators = new Stack<string>();
             var values = new Stack<double>();
 
@@ -294,14 +323,14 @@ namespace VTNET.Extensions
                             value = arg.Calculate();
                             functionValid = !double.IsNaN(value);
                         }
-                        else if (variable == "pi")
-                        {
-                            value = Math.PI;
-                        }
-                        else if (variable == "e")
-                        {
-                            value = Math.PI;
-                        }
+                        //else if (variable == "pi")
+                        //{
+                        //    value = Math.PI;
+                        //}
+                        //else if (variable == "e")
+                        //{
+                        //    value = Math.E;
+                        //}
                         else
                         {
                             functionValid = double.TryParse(arg, style: NumberStyles.Any, provider: calculateCulture, out value);
@@ -353,12 +382,12 @@ namespace VTNET.Extensions
                                 }
                                 value = fact;
                                 break;
-                            case "pi":
-                                value = Math.PI;
-                                break;
-                            case "e":
-                                value = Math.E;
-                                break;
+                            //case "pi":
+                            //    value = Math.PI;
+                            //    break;
+                            //case "e":
+                            //    value = Math.E;
+                            //    break;
                             default:
                                 Stack<double> valuesClone = new Stack<double>(values);
                                 var valueArg = arg.Split(';')
