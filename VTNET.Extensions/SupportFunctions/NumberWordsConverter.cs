@@ -5,7 +5,7 @@ using System.Text;
 using VTNET.Extensions.Languages;
 using static System.String;
 
-namespace VTNET.Extensions.SupportFunctions
+namespace VTNET.Extensions
 {
     public static class NumberWordsConverter
     {

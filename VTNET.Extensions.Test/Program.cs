@@ -1,10 +1,22 @@
 ﻿using System.Globalization;
 using System.Text;
 using VTNET.Extensions;
-using VTNET.Extensions.Languages;
-using VTNET.Extensions.SupportFunctions;
 
 Console.OutputEncoding = Encoding.UTF8;
+
+var p = new ParamValue<int>(1);
+var p1 = new KeyValuePair<string, int>("", 1);
+Params<int> a = [1, 2, 3, 4, 5];
+var a1 = a.Select(x => x.ToString());
+var t = new TestTable();
+Params b = [("a", 1), ("b", 2), ("c", t), 1 , 3, 4];
+var b1 = b.Select(x => x.ToString());
+Params d = [1, 2, 3, 4, "1"];
+var c = a.Get(1);
+
+
+System.Linq.Enumerable.Select(b, x => x.ToString());
+
 //StringEx.SetLanguageToWords(LangWords.VN);
 CalculateEx.AddVariable("mot", 1);
 CalculateEx.AddVariable("hai", 2);
@@ -113,7 +125,6 @@ CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("vi-VN");
 //{
 //    a,b,c,d,e,f,g,h
 //}
-
 class TestTable
 {
     [MapColumnName("Id")]

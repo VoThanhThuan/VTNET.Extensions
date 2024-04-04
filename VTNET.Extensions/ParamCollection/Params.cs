@@ -1,24 +1,246 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace VTNET.Extensions;
+
+public class Params<T> : IEnumerable<ParamValue<T>>
+{
+    protected Dictionary<string, T?> Parameters { get; set; } = new();
+    public int Count { get => Parameters.Count; }
+    public ICollection<string> Keys => Parameters.Keys;
+
+    public ICollection<T?> Values => Parameters.Values;
+    protected int Index { get; set; } = 0;
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="parameters"></param>
+    public Params(params (string key, T? value)[] parameters)
+    {
+        foreach (var (key, value) in parameters)
+        {
+            Parameters.Add(key, value);
+        }
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="parameters"></param>
+    public Params(params T?[] parameters)
+    {
+        foreach (var item in parameters)
+        {
+            Parameters.Add(Guid.NewGuid().ToString(), item);
+        }
+    }
+    public Params(IEnumerable<KeyValuePair<string, T?>> parameters)
+    {
+        foreach (var item in parameters)
+        {
+            Add(item);
+        }
+    }
+    public Params(IEnumerable<ParamValue<T>> parameters)
+    {
+        foreach (var item in parameters)
+        {
+            Add(item);
+        }
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    public Params() { }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public T? this[string key]
+    {
+        set
+        {
+            Parameters[key] = value;
+        }
+        get { return Parameters[key]; }
+    }
+
+    public T? this[int index]
+    {
+        set
+        {
+            if (index >= 0 && index < Parameters.Count)
+            {
+                var element = Parameters.ElementAt(index);
+                Parameters[element.Key] = value;
+            }
+            else
+            {
+                throw new IndexOutOfRangeException();
+            }
+        }
+        get
+        {
+            if (index >= 0 && index < Parameters.Count)
+            {
+                return Parameters.ElementAt(index).Value;
+            }
+            else
+            {
+                throw new IndexOutOfRangeException();
+            }
+        }
+    }
+    public T? Get(string key)
+    {
+        return Parameters[key];
+    }
+    public void Set(string key, T? value)
+    {
+        Parameters[key] = value;
+    }
+    public T? Get(int index)
+    {
+        return this[index];
+    }
+    public void Add(string name, T? value)
+    {
+        Parameters.Add(name, value);
+    }
+    public void Add(T? value)
+    {
+        Parameters.Add($"{Index++}", value);
+    }
+    public void Add((string, T?) item)
+    {
+        Parameters.Add(item.Item1, item.Item2);
+    }
+    public void Add(KeyValuePair<string, T?> item)
+    {
+        Parameters.Add(item.Key, item.Value);
+    }
+    public bool ContainsKey(string key)
+    {
+        return Parameters.ContainsKey(key);
+    }
+
+    public bool TryGetValue(string key, [MaybeNullWhen(false)] out T? value)
+    {
+        return Parameters.TryGetValue(key, out value);
+    }
+
+    public void Clear()
+    {
+        Parameters.Clear();
+    }
+
+    public bool Contains(KeyValuePair<string, T?> item)
+    {
+        return Parameters.Contains(item);
+    }
+
+    public bool Remove(string key)
+    {
+        return Parameters.Remove(key);
+    }
+
+    public bool Remove(KeyValuePair<string, T?> item)
+    {
+        return Parameters.Remove(item.Key);
+    }
+
+    public void ForEach(Action<T?> action)
+    {
+        foreach (var item in Parameters)
+        {
+            action(item.Value);
+        }
+    }
+    public IEnumerable<T?> ForEach(Func<T?, T?> action)
+    {
+        foreach (var item in Parameters)
+        {
+            yield return action(item.Value);
+        }
+    }
+
+    public T? Pop(string key)
+    {
+        if (Parameters.TryGetValue(key, out var data))
+        {
+            Parameters.Remove(key);
+            return data;
+        }
+        return default;
+    }
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return Parameters.Select(x => new ParamValue<T>(x.Key, x.Value)).GetEnumerator();
+    }
+
+    IEnumerator<ParamValue<T>> IEnumerable<ParamValue<T>>.GetEnumerator()
+    {
+        return Parameters.Select(x => new ParamValue<T>(x.Key, x.Value)).GetEnumerator();
+    }
+
+    public Params ToParams()
+    {
+        var p = new Params();
+        foreach (var item in Parameters)
+        {
+            p.Add(item.Key, item.Value);
+        }
+        return p;
+    }
+
+    public static implicit operator Params(Params<T> data)
+    {
+        var p = new Params();
+        foreach (var item in data)
+        {
+            p.Add(item);
+        }
+        return p;
+    }
+
+    public static implicit operator Params<T>(T[] data)
+    {
+        var p = new Params<T>();
+        foreach (var item in data)
+        {
+            p.Add(item);
+        }
+        return p;
+    }
+
+    public static implicit operator Params<T>((string key, T? value)[] data)
+    {
+        var p = new Params<T>();
+        foreach (var item in data)
+        {
+            p.Add(item.key, item.value);
+        }
+        return p;
+    }
+}
+
 /// <summary>
 /// 
 /// </summary>
-public class Params : IEnumerable<KeyValuePair<string, object?>>
+public class Params : Params<object>
 { 
-    Dictionary<string, object?> Parameters { get; set; } = new();
-    readonly bool _IsParameterAuto = false;
-    int _index = 0;
-    public bool IsParameterAuto { get => _IsParameterAuto || _index > 0; }
-    public int Count { get => Parameters.Count; }
+    //Dictionary<string, object?> Parameters { get; set; } = new();
+    //readonly bool _IsParameterAuto = false;
+    //public bool IsParameterAuto { get => _IsParameterAuto; }
+    //public int Count { get => Parameters.Count; }
+    //public ICollection<string> Keys => Parameters.Keys;
 
-    public ICollection<string> Keys => Parameters.Keys;
-
-    public ICollection<object?> Values => Parameters.Values;
+    //public ICollection<object?> Values => Parameters.Values;
 
     /// <summary>
     /// 
@@ -37,10 +259,9 @@ public class Params : IEnumerable<KeyValuePair<string, object?>>
     /// <param name="parameters"></param>
     public Params(params object?[] parameters)
     {
-        _IsParameterAuto = true;
         foreach (var item in parameters)
         {
-            Parameters.Add(_index++.ToString(), item);
+            Parameters.Add(Guid.NewGuid().ToString(), item);
         }
     }
     public Params(IEnumerable<KeyValuePair<string, object?>> parameters)
@@ -53,85 +274,107 @@ public class Params : IEnumerable<KeyValuePair<string, object?>>
     /// <summary>
     /// 
     /// </summary>
-    public Params()
+    public Params(){}
+
+    public T? Get<T>(string key)
     {
+        return (T?)Parameters[key];
+    }
+    public T? Get<T>(int index)
+    {
+        return (T?)Parameters.ElementAt(index).Value;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="key"></param>
-    /// <returns></returns>
-    public object? this[string key]
+    public void ForEach<T>(Action<T?> action)
     {
-        set
+        foreach (var item in Parameters)
         {
-            Parameters[key] = value;
+            action((T?)item.Value);
         }
-        get { return Parameters[key]; }
-    }    
-    
-    public object? this[int index]
+    }
+    public IEnumerable<T?> ForEach<T>(Func<T?, T?> action)
     {
-        set
+        foreach (var item in Parameters)
         {
-            Parameters[index.ToString()] = value;
+            yield return action((T?)item.Value);
         }
-        get { return Parameters[index.ToString()]; }
+    }
+
+    public T? Pop<T>(string key)
+    {
+        if (Parameters.TryGetValue(key, out var data))
+        {
+            Parameters.Remove(key);
+            return (T?)data;
+        }
+        return default;
+    }
+
+    public static implicit operator Params(object[] data)
+    {
+        var p = new Params();
+        foreach (var item in data)
+        {
+            p.Add(item);
+        }
+        return p;
+    }
+    public static implicit operator Params((string key, object? value)[] data)
+    {
+        var p = new Params();
+        foreach (var item in data)
+        {
+            p.Add(item.key, item.value);
+        }
+        return p;
+    }
+
+}
+
+[Serializable]
+public readonly struct ParamValue<T>
+{
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    private readonly string _key;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    private readonly T? _value;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    private readonly bool _autokey;
+
+    public ParamValue(T? value)
+    {
+        _autokey = true;
+        this._key = Guid.NewGuid().ToString();
+        this._value = value;
+    }
+    public ParamValue(string key, T? value)
+    {
+        this._key = key;
+        this._value = value;
+    }
+    public string Key => _key;
+    public T? Value => _value;
+    public bool IsAutoKey => _autokey;
+
+    public override string ToString()
+    {
+        return $"{_key}: {_value}";
+    }
+
+    public static implicit operator ParamValue<T>((string key, T? value) data)
+    {
+        return new ParamValue<T>(data.key, data.value);
+    }
+    public static implicit operator ParamValue<T>(T value)
+    {
+        return new ParamValue<T>(value);
     }    
-    public T? Get<T>(string name)
+    public static implicit operator ParamValue<T>(KeyValuePair<string, T?> value)
     {
-        return (T?)Parameters[name];
+        return new ParamValue<T>(value.Key, value.Value);
     }
-    public void Add(string name, object? value)
+    public static implicit operator KeyValuePair<string, T?>(ParamValue<T> value)
     {
-        Parameters.Add(name, value);
-    }
-    public void Add(object? value)
-    {
-        Parameters.Add(_index++.ToString(), value);
-    }
-    public void Add(KeyValuePair<string, object?> item)
-    {
-        Parameters.Add(item.Key, item.Value);
-    }
-    public bool ContainsKey(string key)
-    {
-        return Parameters.ContainsKey(key);
-    }
-
-    public bool Remove(string key)
-    {
-        return Parameters.Remove(key);
-    }
-
-    public bool TryGetValue(string key, [MaybeNullWhen(false)] out object? value)
-    {
-        return Parameters.TryGetValue(key, out value);
-    }
-
-    public void Clear()
-    {
-        Parameters.Clear();
-    }
-
-    public bool Contains(KeyValuePair<string, object?> item)
-    {
-        return Parameters.Contains(item);
-    }
-
-    public bool Remove(KeyValuePair<string, object?> item)
-    {
-        return Parameters.Remove(item.Key);
-    }
-
-    public IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
-    {
-        return Parameters.GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return Parameters.GetEnumerator();
+        return KeyValuePair.Create(value.Key, value.Value);
     }
 }

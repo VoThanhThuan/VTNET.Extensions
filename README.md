@@ -236,3 +236,13 @@ Feel free to explore the full range of functionalities offered by the StringAnal
 
 v2 for standard 2.1
 v7 for .NET7
+# V7
+Add the Params class. Similar to a Dictionary, but more convenient.
+```csharp
+var p = new Params();
+var p1 = new Params(("key", "value"), ("key1", "value1"))
+var val1 = p1.Get<string>("key"); //value
+
+var p2 = new Params(1,2,3,4,5,6,7,8,9)
+var val2 = p2[3]; //4
+```

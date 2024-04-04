@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using VTNET.Extensions.Models;
 
-namespace VTNET.Extensions.SupportFunctions
+namespace VTNET.Extensions
 {
     public class TextDifferenceInfo
     {
@@ -28,7 +28,7 @@ namespace VTNET.Extensions.SupportFunctions
         }
     }
 
-    public static class StringAnalysis
+    public static partial class StringAnalysis
     {
         static readonly string patternFunctionParams = @"\(((?>[^()\\]+|\\(\(|\\(?<DEPTH>)|\\(\)|\\)(?<-DEPTH>)|\\)(?!\\)|\\.|[^()]+)*)\)";
         static readonly string patternFunctionCall = @"(\w+)\(((?>[^()\\]+|\\(\(|\\(?<DEPTH>)|\\(\)|\\)(?<-DEPTH>)|\\)(?!\\)|\\.|[^()]+)*)\)";
@@ -189,7 +189,7 @@ namespace VTNET.Extensions.SupportFunctions
 
         public static TextDifferenceInfo GetDifferences(string stringA, string stringB)
         {
-            TextDifferenceInfo differences = new TextDifferenceInfo();
+            TextDifferenceInfo differences = new();
 
             int[,] dp = new int[stringA.Length + 1, stringB.Length + 1];
 
@@ -233,5 +233,75 @@ namespace VTNET.Extensions.SupportFunctions
 
             return differences;
         }
+
+        // Generates an array containing every two consecutive letters in the input string
+        static string[] LetterPairs(string str)
+        {
+            int numPairs = str.Length - 1;
+            string[] pairs = new string[numPairs];
+
+            for (int i = 0; i < numPairs; i++)
+            {
+                pairs[i] = str.Substring(i, 2);
+            }
+            return pairs;
+        }
+
+        // Gets all letter pairs for each
+        static List<string> WordLetterPairs(string str)
+        {
+            List<string> AllPairs = new();
+
+            // Tokenize the string and put the tokens/words into an array
+            string[] Words = Space().Split(str);
+
+            // For each word
+            for (int w = 0; w < Words.Length; w++)
+            {
+                if (!string.IsNullOrEmpty(Words[w]))
+                {
+                    // Find the pairs of characters
+                    string[] PairsInWord = LetterPairs(Words[w]);
+
+                    for (int p = 0; p < PairsInWord.Length; p++)
+                    {
+                        AllPairs.Add(PairsInWord[p]);
+                    }
+                }
+            }
+            return AllPairs;
+        }
+
+        /// <summary>
+        /// Compares the two strings based on letter pair matches
+        /// </summary>
+        /// <returns>percentage</returns>
+        public static double CompareStrings(string str1, string str2)
+        {
+            var pairs1 = WordLetterPairs(str1.ToUpper());
+            var pairs2 = WordLetterPairs(str2.ToUpper());
+
+            int intersection = 0;
+            int union = pairs1.Count + pairs2.Count;
+
+            for (int i = 0; i < pairs1.Count; i++)
+            {
+                for (int j = 0; j < pairs2.Count; j++)
+                {
+                    if (pairs1[i] == pairs2[j])
+                    {
+                        intersection++;
+                        pairs2.RemoveAt(j);//Must remove the match to prevent "AAAA" from appearing to match "AA" with 100% success
+                        break;
+                    }
+                }
+            }
+
+            return 2.0 * intersection * 100 / union; //returns in percentage
+                                                       //return (2.0 * intersection) / union; //returns in score from 0 to 1
+        }
+
+        [GeneratedRegex("\\s")]
+        private static partial Regex Space();
     }
 }

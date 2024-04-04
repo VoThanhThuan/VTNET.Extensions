@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using VTNET.Extensions.Languages;
 using VTNET.Extensions.Models;
-using VTNET.Extensions.SupportFunctions;
 
 namespace VTNET.Extensions
 {

@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Text;
 using static System.String;
 
-namespace VTNET.Extensions.SupportFunctions
+namespace VTNET.Extensions
 {
     public class ConversionFactory
     {

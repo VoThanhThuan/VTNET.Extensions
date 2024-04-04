@@ -4,6 +4,13 @@ namespace VTNET.Extensions.Calculate.Test;
 public class UnitTest1
 {
     [TestMethod]
+    public void ManyBrackets()
+    {
+        var result = "1+(2+(3+(4+(5+(6+(7+(8+(9+1))))))))".Calculate();
+        Assert.IsFalse(double.IsNaN(result), "result: NaN");
+        Assert.AreEqual(1 + (2 + (3 + (4 + (5 + (6 + (7 + (8 + (9 + 1)))))))), result);
+    }
+    [TestMethod]
     public void AddVariable()
     {
         CalculateEx.AddVariable("mot", 1);
@@ -12,6 +19,6 @@ public class UnitTest1
         CalculateEx.AddVariable("bay", 7);
         var result = "mot + hai * (ba + bay)".Calculate();
         Assert.IsFalse(double.IsNaN(result), "result: NaN");
-        Assert.AreEqual((1 + 2 * (3 + 7)), result);
+        Assert.AreEqual(1 + 2 * (3 + 7), result);
     }
 }
