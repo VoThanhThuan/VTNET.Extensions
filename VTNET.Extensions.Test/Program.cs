@@ -9,7 +9,7 @@ var p1 = new KeyValuePair<string, int>("", 1);
 Params<int> a = [1, 2, 3, 4, 5];
 var a1 = a.Select(x => x.ToString());
 var t = new TestTable();
-Params b = [("a", 1), ("b", 2), ("c", t), 1 , 3, 4];
+Params b = [("0", 1), ("b", 2), ("c", t), 1 , "2", 4.0d];
 var b1 = b.Select(x => x.ToString());
 Params d = [1, 2, 3, 4, "1"];
 var c = a.Get(1);

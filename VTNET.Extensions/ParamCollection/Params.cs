@@ -114,7 +114,12 @@ public class Params<T> : IEnumerable<ParamValue<T>>
     }
     public void Add(T? value)
     {
-        Parameters.Add($"{Index++}", value);
+        var prefix = "";
+        while(!Parameters.TryAdd($"{prefix}{Index++}", value))
+        {
+            Index--;
+            prefix += "#";
+        }
     }
     public void Add((string, T?) item)
     {
@@ -190,42 +195,42 @@ public class Params<T> : IEnumerable<ParamValue<T>>
 
     public Params ToParams()
     {
-        var p = new Params();
+        var @params = new Params();
         foreach (var item in Parameters)
         {
-            p.Add(item.Key, item.Value);
+            @params.Add(item.Key, item.Value);
         }
-        return p;
+        return @params;
     }
 
     public static implicit operator Params(Params<T> data)
     {
-        var p = new Params();
+        var @params = new Params();
         foreach (var item in data)
         {
-            p.Add(item);
+            @params.Add(item);
         }
-        return p;
+        return @params;
     }
 
     public static implicit operator Params<T>(T[] data)
     {
-        var p = new Params<T>();
+        var @params = new Params<T>();
         foreach (var item in data)
         {
-            p.Add(item);
+            @params.Add(item);
         }
-        return p;
+        return @params;
     }
 
     public static implicit operator Params<T>((string key, T? value)[] data)
     {
-        var p = new Params<T>();
+        var @params = new Params<T>();
         foreach (var item in data)
         {
-            p.Add(item.key, item.value);
+            @params.Add(item.key, item.value);
         }
-        return p;
+        return @params;
     }
 }
 
@@ -276,11 +281,11 @@ public class Params : Params<object>
     /// </summary>
     public Params(){}
 
-    public T? Get<T>(string key)
+    public virtual T? Get<T>(string key)
     {
         return (T?)Parameters[key];
     }
-    public T? Get<T>(int index)
+    public virtual T? Get<T>(int index)
     {
         return (T?)Parameters.ElementAt(index).Value;
     }
@@ -340,21 +345,32 @@ public readonly struct ParamValue<T>
     private readonly T? _value;
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private readonly bool _autokey;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+    private readonly Type _valueType;
 
     public ParamValue(T? value)
     {
         _autokey = true;
-        this._key = Guid.NewGuid().ToString();
-        this._value = value;
+        _key = Guid.NewGuid().ToString();
+        _value = value;
+        _valueType = value?.GetType()??typeof(T);
     }
     public ParamValue(string key, T? value)
     {
-        this._key = key;
-        this._value = value;
+        _key = key;
+        _value = value;
+        _valueType = value?.GetType() ?? typeof(T);
+    }
+    public ParamValue(string key, T? value, string tag)
+    {
+        _key = key;
+        _value = value;
+        _valueType = value?.GetType() ?? typeof(T);
     }
     public string Key => _key;
     public T? Value => _value;
     public bool IsAutoKey => _autokey;
+    public Type ValueType => _valueType;
 
     public override string ToString()
     {
