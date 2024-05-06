@@ -405,5 +405,11 @@ namespace VTNET.Extensions
             }
             return result.ToString();
         }
+
+        //public static string ToJson(this object obj, JsonSerializerOptions? options = null)
+        //{
+        //    if (obj is string str) return str;
+        //    return JsonSerializer.Serialize(obj, options: options);
+        //}
     }
 }

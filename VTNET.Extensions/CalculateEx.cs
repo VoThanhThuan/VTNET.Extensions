@@ -20,8 +20,8 @@ namespace VTNET.Extensions
         static string _pattern = $"^{_patternFunction}\\({_patternArg}\\)|{_variables}";
         static string _patterns = $"{_patternFunction}\\({_patternArg}\\)|{_variables}";
         static Dictionary<string, CalculateFuntionCustom> _FunctionExtensions = new();
-        static Dictionary<string, Func<double, double, double>> _FunctionOperators = new();
-        static Dictionary<string, double> _VariablesDefine = new() { { "pi", Math.PI}, { "e", Math.E} };
+        static Dictionary<string, Func<decimal?, decimal?, decimal?>> _FunctionOperators = new();
+        static Dictionary<string, decimal> _VariablesDefine = new() { { "pi", (decimal)Math.PI}, { "e", (decimal)Math.E} };
         static List<string> _VariablesOrder = new() { "pi", "e" };
         static CultureInfo _calculateCulture = CultureInfo.InvariantCulture;
         public static CultureInfo Culture { get => _calculateCulture; set => _calculateCulture = value; }
@@ -36,7 +36,7 @@ namespace VTNET.Extensions
             list.Add(")");
             return "|".Join(list);
         }
-        public static void AddVariable(string key, double value)
+        public static void AddVariable(string key, decimal value)
         {
             _VariablesDefine.Add(key, value);
             _VariablesOrder.Add(key);
@@ -62,7 +62,7 @@ namespace VTNET.Extensions
         /// </summary>
         /// <param name="functionName"></param>
         /// <param name="function"></param>
-        public static void AddSimpleFunction(string functionName, Func<double, double> function)
+        public static void AddSimpleFunction(string functionName, Func<decimal?, decimal?> function)
         {
             _FunctionExtensions.Add(functionName, new CalculateFuntionCustom((x, isDeg) => {
                 return function(x[0]);
@@ -81,7 +81,7 @@ namespace VTNET.Extensions
         /// </summary>
         /// <param name="functionName"></param>
         /// <param name="function"></param>
-        public static void AddSimpleFunction(string functionName, Func<double, bool, double> function)
+        public static void AddSimpleFunction(string functionName, Func<decimal?, bool, decimal?> function)
         {
             _FunctionExtensions.Add(functionName, new CalculateFuntionCustom((x, isDeg) => {
                 return function(x[0], isDeg);
@@ -101,7 +101,7 @@ namespace VTNET.Extensions
         /// <param name="functionName"></param>
         /// <param name="function"></param>
         /// <param name="parameterRequired">number of required parameters to be passed</param>
-        public static void AddFunction(string functionName, Func<double[], double> function, int parameterRequired = 0)
+        public static void AddFunction(string functionName, Func<decimal?[], decimal?> function, int parameterRequired = 0)
         {
             _FunctionExtensions.Add(functionName, new CalculateFuntionCustom((args, isDeg)=>function(args), parameterRequired));
         }
@@ -118,7 +118,7 @@ namespace VTNET.Extensions
         /// <param name="functionName"></param>
         /// <param name="function"></param>
         /// <param name="parameterRequired">number of required parameters to be passed</param>
-        public static void AddFunction(string functionName, Func<double[], bool, double> function, int parameterRequired = 0)
+        public static void AddFunction(string functionName, Func<decimal?[], bool, decimal?> function, int parameterRequired = 0)
         {
             _FunctionExtensions.Add(functionName, new CalculateFuntionCustom(function, parameterRequired));
         }
@@ -127,7 +127,7 @@ namespace VTNET.Extensions
         {
             _FunctionExtensions.Remove(functionName);
         }
-        public static void AddOperator(char functionName, Func<double, double, double> function, int priority = 1)
+        public static void AddOperator(char functionName, Func<decimal?, decimal?, decimal?> function, int priority = 1)
         {
             var name = functionName.ToString();
             _FunctionOperators.Add(name, function);
@@ -154,12 +154,12 @@ namespace VTNET.Extensions
         {
             return string.Join(',', _operatorPriorityPlus);
         }
-        static double CalculateSimple(ref string strMath, Stack<double> values, Stack<string> operators, CultureInfo? calculateCulture = null)
+        static decimal? CalculateSimple(ref string strMath, Stack<decimal?> values, Stack<string> operators, CultureInfo? calculateCulture = null)
         {
             calculateCulture ??= _calculateCulture;
             var stringValue = "";
             var isGroup = false;
-            var result = 0.0d;
+            decimal? result = null;
             var loop = true;
             var loopCurrent = 0;
             var checkFunction = Regex.Match(strMath, _patterns);
@@ -178,7 +178,7 @@ namespace VTNET.Extensions
                         isGroup = false;
                         if (!string.IsNullOrEmpty(stringValue))
                         {
-                            if (double.TryParse(stringValue, style: NumberStyles.Any, provider: calculateCulture, out var num))
+                            if (decimal.TryParse(stringValue, style: NumberStyles.Any, provider: calculateCulture, out var num))
                             {
                                 values.Push(num);
                                 stringValue = "";
@@ -191,7 +191,7 @@ namespace VTNET.Extensions
                         break;
                     case "!":
                         {
-                            if (double.TryParse(stringValue, style: NumberStyles.Any, provider: calculateCulture, out var value))
+                            if (decimal.TryParse(stringValue, style: NumberStyles.Any, provider: calculateCulture, out var value))
                             {
                                 var fact = 1;
                                 for (var i = 2; i <= value; i++)
@@ -204,13 +204,13 @@ namespace VTNET.Extensions
                             }
                             else
                             {
-                                return double.NaN;
+                                return null;
                             }
                         }
                         break;
                     case "%":
                         {
-                            if (double.TryParse(stringValue, style: NumberStyles.Any, provider: calculateCulture, out var value))
+                            if (decimal.TryParse(stringValue, style: NumberStyles.Any, provider: calculateCulture, out var value))
                             {
                                 value /= 100;
                                 values.Push(value);
@@ -218,7 +218,7 @@ namespace VTNET.Extensions
                             }
                             else
                             {
-                                return double.NaN;
+                                return null;
                             }
                         }
                         break;
@@ -228,13 +228,13 @@ namespace VTNET.Extensions
                             {
                                 if (!string.IsNullOrEmpty(stringValue))
                                 {
-                                    if (double.TryParse(stringValue, style: NumberStyles.Any, provider: calculateCulture, out var num))
+                                    if (decimal.TryParse(stringValue, style: NumberStyles.Any, provider: calculateCulture, out var num))
                                     {
                                         values.Push(num);
                                     }
                                     else
                                     {
-                                        return double.NaN;
+                                        return null;
                                     }
                                     stringValue = "";
                                 }
@@ -263,7 +263,7 @@ namespace VTNET.Extensions
             }
             if (!string.IsNullOrEmpty(stringValue))
             {
-                if (double.TryParse(stringValue, style: NumberStyles.Any, provider: calculateCulture, out var num))
+                if (decimal.TryParse(stringValue, style: NumberStyles.Any, provider: calculateCulture, out var num))
                 {
                     values.Push(num);
                 }
@@ -282,13 +282,13 @@ namespace VTNET.Extensions
         /// <param name="input"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static double Calculate(this string input, CultureInfo? calculateCulture = null)
+        public static decimal? CalculateM(this string input, CultureInfo? calculateCulture = null)
         {
             calculateCulture ??= _calculateCulture;
             input = ReplaceVariable(input, calculateCulture);
             input = input.RemoveSpaces();
             var operators = new Stack<string>();
-            var values = new Stack<double>();
+            var values = new Stack<decimal?>();
 
             var stringValue = "";
             //var isGroup = false;
@@ -304,8 +304,8 @@ namespace VTNET.Extensions
                     var isDeg = false;
 
                     var matchSI = Regex.Match(arg, _patternSI);
-                    var functionValid = true;
-                    double value = 0;
+                    //var functionValid = true;
+                    decimal? value = 0m;
                     if (matchSI.Success)
                     {
                         if (arg.EndsWith("deg"))
@@ -313,15 +313,15 @@ namespace VTNET.Extensions
                             arg = arg[..^3];
                             isDeg = true;
                         }
-                        functionValid = double.TryParse(matchSI.Groups[1].Value, style: NumberStyles.Any, provider: calculateCulture, out value);
+                        _ = NumberEx.ParseDecimal(matchSI.Groups[1].Value, style: NumberStyles.Any, provider: calculateCulture, out value);
                     }                    
                     else if (!_FunctionExtensions.ContainsKey(function))
                     {
                         var matchChild = Regex.Match(arg, _pattern);
                         if (matchChild.Success)
                         {
-                            value = arg.Calculate();
-                            functionValid = !double.IsNaN(value);
+                            value = arg.CalculateM();
+                            //functionValid = value is not null;
                         }
                         //else if (variable == "pi")
                         //{
@@ -333,43 +333,43 @@ namespace VTNET.Extensions
                         //}
                         else
                         {
-                            functionValid = double.TryParse(arg, style: NumberStyles.Any, provider: calculateCulture, out value);
-                            if (!functionValid)
+                            _ = NumberEx.ParseDecimal(arg, style: NumberStyles.Any, provider: calculateCulture, out value);
+                            if (value is not null)
                             {
                                 value = CalculateSimple(ref arg, values, operators, calculateCulture);
-                                if (!double.IsNaN(value))
+                                if (value is not null)
                                 {
-                                    functionValid = true;
+                                    //functionValid = true;
                                     value = values.Pop();
                                 }
                             }
                         }
 
                     }
-                    if (functionValid)
+                    if (value is not null)
                     {
                         switch (function)
                         {
                             case "log":
-                                value = Math.Log10(value);
+                                value = NumberEx.Log10(value);
                                 break;
                             case "log10":
-                                value = Math.Log10(value);
+                                value = NumberEx.Log10(value);
                                 break;
                             case "sin":
-                                value = isDeg ? Math.Sin(value * Math.PI / 180) : Math.Sin(value);
+                                value = isDeg ? NumberEx.Sin(value * NumberEx.PI / 180) : NumberEx.Sin(value);
                                 break;
                             case "cos":
-                                value = isDeg ? Math.Cos(value * Math.PI / 180) : Math.Cos(value);
+                                value = isDeg ? NumberEx.Cos(value * NumberEx.PI / 180) : NumberEx.Cos(value);
                                 break;
                             case "tan":
-                                value = isDeg ? Math.Tan(value * Math.PI / 180) : Math.Tan(value);
+                                value = isDeg ? NumberEx.Tan(value * NumberEx.PI / 180) : NumberEx.Tan(value);
                                 break;
                             case "sqrt":
-                                value = Math.Sqrt(value);
+                                value = NumberEx.Sqrt(value);
                                 break;
                             case "abs":
-                                value = Math.Abs(value);
+                                value = NumberEx.Abs(value);
                                 break;
                             case "%":
                                 value /= 100;
@@ -389,14 +389,14 @@ namespace VTNET.Extensions
                             //    value = Math.E;
                             //    break;
                             default:
-                                Stack<double> valuesClone = new Stack<double>(values);
+                                Stack<decimal?> valuesClone = new(values);
                                 var valueArg = arg.Split(';')
-                                    .Select(item => double.TryParse(item, style: NumberStyles.Any, provider: calculateCulture, out var num) ? num : CalculateSimple(ref item, valuesClone, operators))
+                                    .Select(item => decimal.TryParse(item, style: NumberStyles.Any, provider: calculateCulture, out var num) ? num : CalculateSimple(ref item, valuesClone, operators))
                                     .ToArray();
                                 CalculateFuntionCustom func = _FunctionExtensions[function];
                                 if (valueArg.Length < func.ParameterRequired)
                                 {
-                                    return double.NaN;
+                                    return null;
                                 }
                                 else
                                 {
@@ -410,7 +410,7 @@ namespace VTNET.Extensions
                     else
                     {
                         // Invalid argument
-                        return double.NaN;
+                        return null;
                     }
                 }
                 else
@@ -420,7 +420,7 @@ namespace VTNET.Extensions
             }
             if (!string.IsNullOrEmpty(stringValue))
             {
-                if (double.TryParse(stringValue, style: NumberStyles.Any, provider: calculateCulture, out var num))
+                if (decimal.TryParse(stringValue, style: NumberStyles.Any, provider: calculateCulture, out var num))
                 {
                     values.Push(num);
                 }
@@ -433,23 +433,37 @@ namespace VTNET.Extensions
             if (values.Count != 1)
             {
                 // Invalid expression
-                return double.NaN;
+                return null;
             }
 
             return values.Pop();
 
         }
-        private static double ExecuteOperation(string op, double b, double a)
+        private static decimal? ExecuteOperation(string op, decimal? b, decimal? a)
         {
             return op switch
             {
-                "^" => Math.Pow(a, b),
+                "^" => NumberEx.Pow(a, b),
                 "*" => a * b,
                 "/" => a / b,
                 "+" => a + b,
                 "-" => a - b,
-                _ => _FunctionOperators.Any() && _FunctionOperators.ContainsKey(op) ? _FunctionOperators[op](a, b) : double.NaN
+                _ => _FunctionOperators.Any() && _FunctionOperators.ContainsKey(op) ? _FunctionOperators[op](a, b) : null
             };
+        }
+
+        /// <summary>
+        /// String Math Calculator
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static double Calculate(this string input, CultureInfo? calculateCulture = null)
+        {
+            var result = CalculateM(input, calculateCulture);
+            if (result == null)
+                return double.NaN;
+            return (double)result;
         }
     }
 }

@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 
 namespace VTNET.Extensions
 {
     public static class NumberEx
     {
-        static Type[] _numberTypes = new Type[]
+        static readonly Type[] _numberTypes = new Type[]
         {
                 typeof(sbyte), typeof(byte),
                 typeof(short), typeof(ushort),
@@ -79,5 +81,60 @@ namespace VTNET.Extensions
             return double.TryParse(value, out var result) ? result : double.NaN;
         }
         
+        public static bool ParseDecimal([NotNullWhen(true)] string? s, NumberStyles style, IFormatProvider? provider, out decimal? result)
+        {
+            if (decimal.TryParse(s, style, provider, out var res))
+            {
+                result = res;
+                return true;
+            }
+            result = default; 
+            return false;
+        }
+
+        public static readonly decimal PI = 3.14159265358979323846m;
+
+        public static decimal? Log10(decimal? m)
+        {
+            if(!m.HasValue)
+                return 0;
+            return (decimal)Math.Log10((double)m);
+        }
+        public static decimal? Sin(decimal? m)
+        {
+            if (!m.HasValue)
+                return 0;
+            return (decimal)Math.Sin((double)m);
+        }
+        public static decimal? Cos(decimal? m)
+        {
+            if (!m.HasValue)
+                return 0;
+            return (decimal)Math.Cos((double)m);
+        }
+        public static decimal? Tan(decimal? m)
+        {
+            if (!m.HasValue)
+                return 0;
+            return (decimal)Math.Tan((double)m);
+        }
+        public static decimal? Sqrt(decimal? m)
+        {
+            if (!m.HasValue)
+                return 0;
+            return (decimal)Math.Sqrt((double)m);
+        }
+        public static decimal? Abs(decimal? m)
+        {
+            if (!m.HasValue)
+                return 0;
+            return (decimal)Math.Abs((double)m);
+        }
+        public static decimal? Pow(decimal? a, decimal? b)
+        {
+            if (!a.HasValue || !b.HasValue)
+                return 0;
+            return (decimal)Math.Pow((double)a, (double)b);
+        }
     }
 }

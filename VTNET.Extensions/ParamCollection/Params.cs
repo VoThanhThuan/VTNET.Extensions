@@ -232,6 +232,16 @@ public class Params<T> : IEnumerable<ParamValue<T>>
         }
         return @params;
     }
+
+    public static implicit operator Params<T>(Dictionary<string, T> data)
+    {
+        var @params = new Params<T>();
+        foreach (var item in data)
+        {
+            @params.Add(item.Key, item.Value);
+        }
+        return @params;
+    }
 }
 
 /// <summary>

@@ -3,36 +3,68 @@ using System.Text;
 using VTNET.Extensions;
 
 Console.OutputEncoding = Encoding.UTF8;
+Console.InputEncoding = Encoding.UTF8;
 
-var p = new ParamValue<int>(1);
-var p1 = new KeyValuePair<string, int>("", 1);
-Params<int> a = [1, 2, 3, 4, 5];
-var a1 = a.Select(x => x.ToString());
-var t = new TestTable();
-Params b = [("0", 1), ("b", 2), ("c", t), 1 , "2", 4.0d];
-var b1 = b.Select(x => x.ToString());
-Params d = [1, 2, 3, 4, "1"];
-var c = a.Get(1);
-
-
-System.Linq.Enumerable.Select(b, x => x.ToString());
-
-//StringEx.SetLanguageToWords(LangWords.VN);
-CalculateEx.AddVariable("mot", 1);
+CalculateEx.AddVariable("không", 0);
+CalculateEx.AddVariable("một", 1);
 CalculateEx.AddVariable("hai", 2);
 CalculateEx.AddVariable("ba", 3);
-CalculateEx.AddVariable("bay", 7);
-var result = "mot + hai * (ba + bay)".Calculate();
-
-var testTable = new TestTable()
+CalculateEx.AddVariable("bốn", 4);
+CalculateEx.AddVariable("năm", 5);
+CalculateEx.AddVariable("sáu", 6);
+CalculateEx.AddVariable("bảy", 7);
+CalculateEx.AddVariable("tám", 8);
+CalculateEx.AddVariable("chín", 9);
+CalculateEx.AddFunction("cộng", numbers =>
 {
-    Idx = "1",
-    Name = "Test",
-    Age = "69"
-};
-var testClone = testTable.Map<TestMap>();
-testClone.Ten = "hahaha";
-CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("vi-VN");
+    return numbers.Sum();
+});
+CalculateEx.AddFunction("xxx", numbers =>
+{
+    return numbers[0] * numbers[1] * numbers[2];
+});
+while (true)
+{
+    Console.WriteLine("Nhập phép tính");
+    Console.Write("> ");
+    var text = Console.ReadLine();
+    if (!text.IsNullOrEmpty())
+    {
+        text = text.Replace("cộng", "+", StringComparison.CurrentCultureIgnoreCase);
+        Console.Write("= ");
+        Console.WriteLine(text.Calculate());
+    }
+}
+
+//var p = new ParamValue<int>(1);
+//var p1 = new KeyValuePair<string, int>("", 1);
+//Params<int> a = [1, 2, 3, 4, 5];
+//var a1 = a.Select(x => x.ToString());
+//var t = new TestTable();
+//Params b = [("0", 1), ("b", 2), ("c", t), 1 , "2", 4.0d];
+//var b1 = b.Select(x => x.ToString());
+//Params d = [1, 2, 3, 4, "1"];
+//var c = a.Get(1);
+
+
+//System.Linq.Enumerable.Select(b, x => x.ToString());
+
+////StringEx.SetLanguageToWords(LangWords.VN);
+//CalculateEx.AddVariable("mot", 1);
+//CalculateEx.AddVariable("hai", 2);
+//CalculateEx.AddVariable("ba", 3);
+//CalculateEx.AddVariable("bay", 7);
+//var result = "mot + hai * (ba + bay)".Calculate();
+
+//var testTable = new TestTable()
+//{
+//    Idx = "1",
+//    Name = "Test",
+//    Age = "69"
+//};
+//var testClone = testTable.Map<TestMap>();
+//testClone.Ten = "hahaha";
+//CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("vi-VN");
 //var test = double.Parse("1.234,56");
 //var levenshtein = StringAnalysis.GetDifferences("võ thành thuận", "võ thành Thuặn");
 
