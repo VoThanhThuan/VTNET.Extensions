@@ -48,6 +48,12 @@ public class UnitTest1
         var result3 = "0.1--+0.2".Calculate();
         Assert.IsFalse(double.IsNaN(result3), "result: NaN");
         Assert.AreEqual("0.3", result3.ToString());
+
+        Console.WriteLine("Case 5");
+        var result4 = "-1-(-2)".Calculate();
+        Assert.IsFalse(double.IsNaN(result4), "result: NaN");
+        Assert.AreEqual(-1 - (-2), result4);
+
     }
 
     [TestMethod]

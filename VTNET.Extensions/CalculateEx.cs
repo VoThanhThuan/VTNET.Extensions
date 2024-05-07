@@ -179,16 +179,14 @@ namespace VTNET.Extensions
             }
             return input;
         }
-        static decimal? CalculateSimple(ref string strMath, Stack<decimal?> values, Stack<string> operators, CultureInfo? calculateCulture = null)
+        /// <summary>
+        /// Handles the case where a new calculation starts and the operator comes first
+        /// </summary>
+        /// <param name="strMath"></param>
+        /// <returns></returns>
+        static string FirstHanlder(ref string strMath)
         {
-            calculateCulture ??= _calculateCulture;
             var stringValue = "";
-            var isGroup = false;
-            decimal? result = null;
-            var loop = true;
-            var loopCurrent = 0;
-            var checkFunction = Regex.Match(strMath, _patterns);
-            var loopMax = checkFunction.Index;
             // Peek Operator handler
             var peekValue = strMath[0].ToString();
             if (_operatorPriority.TryGetValue(peekValue, out _))
@@ -196,6 +194,19 @@ namespace VTNET.Extensions
                 stringValue = strMath[0].ToString();
                 strMath = strMath[1..];
             }
+            return stringValue;
+        }
+
+        static decimal? CalculateSimple(ref string strMath, Stack<decimal?> values, Stack<string> operators, CultureInfo? calculateCulture = null)
+        {
+            calculateCulture ??= _calculateCulture;
+            var stringValue = FirstHanlder(ref strMath);
+            var isGroup = false;
+            decimal? result = null;
+            var loop = true;
+            var loopCurrent = 0;
+            var checkFunction = Regex.Match(strMath, _patterns);
+            var loopMax = checkFunction.Index;
             // Operator handler
             while (!string.IsNullOrEmpty(strMath) && loop)
             {
@@ -205,6 +216,8 @@ namespace VTNET.Extensions
                 {
                     case "(":
                         isGroup = true;
+                        // Peek Operator handler
+                        stringValue = FirstHanlder(ref strMath);
                         break;
                     case ")":
                         isGroup = false;
