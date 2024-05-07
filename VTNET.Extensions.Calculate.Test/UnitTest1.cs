@@ -24,6 +24,30 @@ public class UnitTest1
         var result = "0.1+0.2".Calculate();
         Assert.IsFalse(double.IsNaN(result), "result: NaN");
         Assert.AreEqual("0.3", result.ToString());
+    }    
+    
+    [TestMethod]
+    public void DecimalNegative()
+    {
+        Console.WriteLine("case 1");
+        var result = "-0.1+-0.2".Calculate();
+        Assert.IsFalse(double.IsNaN(result), "result: NaN");
+        Assert.AreEqual("-0.3", result.ToString());
+        
+        Console.WriteLine("case 2");
+        var result1 = "0.1--0.2".Calculate();
+        Assert.IsFalse(double.IsNaN(result1), "result: NaN");
+        Assert.AreEqual("0.3", result1.ToString());
+
+        Console.WriteLine("case 3");
+        var result2 = "-0.1--0.2".Calculate();
+        Assert.IsFalse(double.IsNaN(result2), "result: NaN");
+        Assert.AreEqual("0.1", result2.ToString());
+
+        Console.WriteLine("case 4");
+        var result3 = "0.1--+0.2".Calculate();
+        Assert.IsFalse(double.IsNaN(result3), "result: NaN");
+        Assert.AreEqual("0.3", result3.ToString());
     }
 
     [TestMethod]
@@ -42,5 +66,26 @@ public class UnitTest1
         var result = "một + hai * (ba + bảy)".Calculate();
         Assert.IsFalse(double.IsNaN(result), "result: NaN");
         Assert.AreEqual(1 + 2 * (3 + 7), result);
+    }
+
+    [TestMethod]
+    public void CheckParamsRequired()
+    {
+        CalculateEx.AddFunction("xx", nums =>
+        {
+            return nums[0] + nums[1];
+        }, parameterRequired: 2);
+
+        var result = "xx(1;2;3)".Calculate();
+        Assert.IsFalse(double.IsNaN(result), "result: NaN");
+        Assert.AreEqual(3, result);
+
+        CalculateEx.AddFunction("xxxx", nums =>
+        {
+            return nums[0] + nums[1] + nums[2];
+        }, parameterRequired: 3);
+
+        var result2 = "xxx(1;2)".Calculate();
+        Assert.IsTrue(double.IsNaN(result2), "result: NaN");
     }
 }

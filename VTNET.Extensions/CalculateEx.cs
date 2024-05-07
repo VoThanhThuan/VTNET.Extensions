@@ -154,6 +154,31 @@ namespace VTNET.Extensions
         {
             return string.Join(',', _operatorPriorityPlus);
         }
+        static readonly Dictionary<string, string> _mapOperator = new()
+        {
+            {"--", "+" },
+            {"-+", "-" },
+            {"++", "+" }
+        };
+        static bool JoinOperators(string op1, string op2, out string opJoin)
+        {
+            var pairOperator = $"{op1}{op2}";
+            if (_mapOperator.TryGetValue(pairOperator, out var c))
+            {
+                opJoin = c;
+                return true;
+            }
+            opJoin = pairOperator;
+            return false;
+        }
+        static string ReplaceOperators(string input)
+        {
+            foreach (var kvp in _mapOperator)
+            {
+                input = input.Replace(kvp.Key, kvp.Value);
+            }
+            return input;
+        }
         static decimal? CalculateSimple(ref string strMath, Stack<decimal?> values, Stack<string> operators, CultureInfo? calculateCulture = null)
         {
             calculateCulture ??= _calculateCulture;
@@ -164,7 +189,14 @@ namespace VTNET.Extensions
             var loopCurrent = 0;
             var checkFunction = Regex.Match(strMath, _patterns);
             var loopMax = checkFunction.Index;
-            // Operator
+            // Peek Operator handler
+            var peekValue = strMath[0].ToString();
+            if (_operatorPriority.TryGetValue(peekValue, out _))
+            {
+                stringValue = strMath[0].ToString();
+                strMath = strMath[1..];
+            }
+            // Operator handler
             while (!string.IsNullOrEmpty(strMath) && loop)
             {
                 var op = strMath[..1];
@@ -246,11 +278,11 @@ namespace VTNET.Extensions
                                 }
 
                                 operators.Push(op);
-                            }
-                            else
-                            {
-                                stringValue += op;
-                            }
+                                }
+                                else
+                                {
+                                    stringValue += op;
+                                }
 
                         }
                         break;
@@ -285,6 +317,7 @@ namespace VTNET.Extensions
         public static decimal? CalculateM(this string input, CultureInfo? calculateCulture = null)
         {
             calculateCulture ??= _calculateCulture;
+            input = ReplaceOperators(input);
             input = ReplaceVariable(input, calculateCulture);
             input = input.RemoveSpaces();
             var operators = new Stack<string>();
@@ -334,7 +367,7 @@ namespace VTNET.Extensions
                         else
                         {
                             _ = NumberEx.ParseDecimal(arg, style: NumberStyles.Any, provider: calculateCulture, out value);
-                            if (value is not null)
+                            if (value is null)
                             {
                                 value = CalculateSimple(ref arg, values, operators, calculateCulture);
                                 if (value is not null)

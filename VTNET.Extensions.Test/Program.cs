@@ -1,9 +1,9 @@
-﻿using System.Globalization;
-using System.Text;
+﻿using System.Text;
 using VTNET.Extensions;
 
 Console.OutputEncoding = Encoding.UTF8;
 Console.InputEncoding = Encoding.UTF8;
+
 
 CalculateEx.AddVariable("không", 0);
 CalculateEx.AddVariable("một", 1);
@@ -32,7 +32,8 @@ while (true)
     {
         text = text.Replace("cộng", "+", StringComparison.CurrentCultureIgnoreCase);
         Console.Write("= ");
-        Console.WriteLine(text.Calculate());
+        var result = text.Calculate();
+        Console.WriteLine(result);
     }
 }
 
