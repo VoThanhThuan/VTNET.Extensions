@@ -9,40 +9,42 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace VTNET.Extensions.Models;
 public struct ValidatorFields<T>
 {
-    PropertyInfo[] _properties;
+    //PropertyInfo[] _properties;
     T _obj;
     public List<ErrorExModel> Errors { get; set; } = new();
     public readonly bool IsValid => Errors.Count == 0;
     public ValidatorFields(T obj)
     {
         _obj = obj;
-        _properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        //_properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
     }
     public ValidatorsReturn<T> Check<P>(Expression<Func<T, P>> property)
     {
         if (property.Body is MemberExpression memberExpression)
         {
             var propertyName = memberExpression.Member.Name;
-            var propertyInfo = typeof(T).GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            var value = propertyInfo?.GetValue(_obj);
+            var func = property.Compile();
+            var value = func(_obj);
+            //var propertyInfo = typeof(T).GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            //var value = propertyInfo?.GetValue(_obj);
 
-            return new ValidatorsReturn<T>(_obj, propertyName, value, _properties, Errors);
+            return new ValidatorsReturn<T>(_obj, propertyName, value, Errors);
         }
         else
         {
             throw new ArgumentException("The provided expression does not specify a valid property.", nameof(property));
         }
     }
-    public ValidatorsReturn<T> Check(string fieldName)
-    {
-        var field = _properties.FirstOrDefault(f => f.Name == fieldName);
-        if (field != null)
-        {
-            var value = field.GetValue(_obj);
-            return new ValidatorsReturn<T>(_obj, fieldName, value, _properties, Errors);
-        }
-        return new ValidatorsReturn<T>(_obj, "", null, false, _properties, Errors);
-    }
+    //public ValidatorsReturn<T> Check(string fieldName)
+    //{
+    //    var field = _properties.FirstOrDefault(f => f.Name == fieldName);
+    //    if (field != null)
+    //    {
+    //        var value = field.GetValue(_obj);
+    //        return new ValidatorsReturn<T>(_obj, fieldName, value, _properties, Errors);
+    //    }
+    //    return new ValidatorsReturn<T>(_obj, "", null, false, _properties, Errors);
+    //}
 }
 
 public partial struct ValidatorsReturn<T>
@@ -59,20 +61,20 @@ public partial struct ValidatorsReturn<T>
     bool? _isValidOr;
     readonly T _obj;
 
-    PropertyInfo[] _properties;
-    public ValidatorsReturn(T obj, string fieldName, object? value, PropertyInfo[] properties, List<ErrorExModel> errors)
+    //PropertyInfo[] _properties;
+    public ValidatorsReturn(T obj, string fieldName, object? value, List<ErrorExModel> errors)
     {
         _obj = obj;
-        _properties = properties;
+        //_properties = properties;
         _fieldName = fieldName;
         Errors = errors;
         _value = value;
         _valueString = value?.ToString() ?? "";
     }
-    public ValidatorsReturn(T obj, string fieldName, object? value, bool isValid, PropertyInfo[] properties, List<ErrorExModel> errors)
+    public ValidatorsReturn(T obj, string fieldName, object? value, bool isValid, List<ErrorExModel> errors)
     {
         _obj = obj;
-        _properties = properties;
+        //_properties = properties;
         _fieldName = fieldName;
         Errors = errors;
         _value = value;
@@ -111,26 +113,26 @@ public partial struct ValidatorsReturn<T>
         if (property.Body is MemberExpression memberExpression)
         {
             var propertyName = memberExpression.Member.Name;
-            var propertyInfo = typeof(T).GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            var value = propertyInfo?.GetValue(_obj);
+            var func = property.Compile();
+            var value = func(_obj);
 
-            return new ValidatorsReturn<T>(_obj, propertyName, value, _properties, Errors);
+            return new ValidatorsReturn<T>(_obj, propertyName, value, Errors);
         }
         else
         {
             throw new ArgumentException("The provided expression does not specify a valid property.", nameof(property));
         }
     }
-    public ValidatorsReturn<T> Check(string fieldName)
-    {
-        var field = _properties.FirstOrDefault(f => f.Name == fieldName);
-        if (field != null)
-        {
-            var value = field.GetValue(_obj);
-            return new ValidatorsReturn<T>(_obj, fieldName, value, _properties, Errors);
-        }
-        return new ValidatorsReturn<T>(_obj, "", null, false, _properties, Errors);
-    }
+    //public ValidatorsReturn<T> Check(string fieldName)
+    //{
+    //    var field = _properties.FirstOrDefault(f => f.Name == fieldName);
+    //    if (field != null)
+    //    {
+    //        var value = field.GetValue(_obj);
+    //        return new ValidatorsReturn<T>(_obj, fieldName, value, _properties, Errors);
+    //    }
+    //    return new ValidatorsReturn<T>(_obj, "", null, false, _properties, Errors);
+    //}
     public ValidatorsReturn<T> Not { get
         {
             _isNot = !_isNot;
@@ -196,7 +198,20 @@ public partial struct ValidatorsReturn<T>
     }
     public ValidatorsReturn<T> Length(int max, string message) => Length(0, max, message);
 
-
+    public ValidatorsReturn<T> Number(decimal? min = null, decimal? max = null, string message = "")
+    {
+        if (!NumberEx.IsNumberType(_value))
+        {
+            _isValid = false;
+            return Return(message);
+        }
+        var num = Convert.ToDecimal(_value);
+        if(min.HasValue)
+            _isValid = num >= min;
+        if(max.HasValue)
+            _isValid = num <= max;
+        return Return(message);
+    }
 
     [GeneratedRegex("^[0-9]*$")]
     private static partial Regex RegTextOnly();

@@ -61,12 +61,17 @@ var testTable = new TestTable()
 {
     Idx = "123456789",
     Name = "BTestabc",
-    Age = "69"
+    Age = "69",
+    Child = new()
+    {
+        Age = 24
+    }
 };
 
 var v = ClassEx.Validation(testTable)
     .Check(x => x.Idx).Not.IsTextOnly("Idx chỉ nên là số")
-    .Check(x => x.Name).Not.Contains(" ", "Name không nên chứa khoảng trắng").StartsWith("A", "Name nên bắt đầu bằng A hoặc B").Or.StartsWith("B", "Name nên bắt đầu bằng B");
+    .Check(x => x.Name).Not.Contains(" ", "Name không nên chứa khoảng trắng").StartsWith("A", "Name nên bắt đầu bằng A hoặc B").Or.StartsWith("B", "Name nên bắt đầu bằng B")
+    .Check(x => x.Child.Age).Number(max: 23, message: "Tuổi tối đa là 23");
 
 var b = v.IsValid;
 var c = v.Errors;
@@ -171,6 +176,7 @@ class TestTable
     public string Idx { get; set; } = "";
     public string Name { get; set; } = "";
     public string Age { get; set; } = "";
+    public TestMap Child { get; set; } = new();
 }
 class TestMap
 {
@@ -178,6 +184,5 @@ class TestMap
     public string Ma { get; set; } = "";
     [MapName("Name")]
     public string Ten { get; set; } = "";
-    public string Age { get; set; } = "";
-
+    public int Age { get; set; } 
 }
