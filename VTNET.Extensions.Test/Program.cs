@@ -5,37 +5,37 @@ Console.OutputEncoding = Encoding.UTF8;
 Console.InputEncoding = Encoding.UTF8;
 
 
-CalculateEx.AddVariable("không", 0);
-CalculateEx.AddVariable("một", 1);
-CalculateEx.AddVariable("hai", 2);
-CalculateEx.AddVariable("ba", 3);
-CalculateEx.AddVariable("bốn", 4);
-CalculateEx.AddVariable("năm", 5);
-CalculateEx.AddVariable("sáu", 6);
-CalculateEx.AddVariable("bảy", 7);
-CalculateEx.AddVariable("tám", 8);
-CalculateEx.AddVariable("chín", 9);
-CalculateEx.AddFunction("cộng", numbers =>
-{
-    return numbers.Sum();
-});
-CalculateEx.AddFunction("xxx", numbers =>
-{
-    return numbers[0] * numbers[1] * numbers[2];
-});
-while (true)
-{
-    Console.WriteLine("Nhập phép tính");
-    Console.Write("> ");
-    var text = Console.ReadLine();
-    if (!text.IsNullOrEmpty())
-    {
-        text = text.Replace("cộng", "+", StringComparison.CurrentCultureIgnoreCase);
-        Console.Write("= ");
-        var result = text.Calculate();
-        Console.WriteLine(result);
-    }
-}
+//CalculateEx.AddVariable("không", 0);
+//CalculateEx.AddVariable("một", 1);
+//CalculateEx.AddVariable("hai", 2);
+//CalculateEx.AddVariable("ba", 3);
+//CalculateEx.AddVariable("bốn", 4);
+//CalculateEx.AddVariable("năm", 5);
+//CalculateEx.AddVariable("sáu", 6);
+//CalculateEx.AddVariable("bảy", 7);
+//CalculateEx.AddVariable("tám", 8);
+//CalculateEx.AddVariable("chín", 9);
+//CalculateEx.AddFunction("cộng", numbers =>
+//{
+//    return numbers.Sum();
+//});
+//CalculateEx.AddFunction("xxx", numbers =>
+//{
+//    return numbers[0] * numbers[1] * numbers[2];
+//});
+//while (true)
+//{
+//    Console.WriteLine("Nhập phép tính");
+//    Console.Write("> ");
+//    var text = Console.ReadLine();
+//    if (!text.IsNullOrEmpty())
+//    {
+//        text = text.Replace("cộng", "+", StringComparison.CurrentCultureIgnoreCase);
+//        Console.Write("= ");
+//        var result = text.Calculate();
+//        Console.WriteLine(result);
+//    }
+//}
 
 //var p = new ParamValue<int>(1);
 //var p1 = new KeyValuePair<string, int>("", 1);
@@ -57,12 +57,19 @@ while (true)
 //CalculateEx.AddVariable("bay", 7);
 //var result = "mot + hai * (ba + bay)".Calculate();
 
-//var testTable = new TestTable()
-//{
-//    Idx = "1",
-//    Name = "Test",
-//    Age = "69"
-//};
+var testTable = new TestTable()
+{
+    Idx = "123456789",
+    Name = "BTestabc",
+    Age = "69"
+};
+
+var v = ClassEx.Validation(testTable)
+    .Check(x => x.Idx).Not.IsTextOnly("Idx chỉ nên là số")
+    .Check(x => x.Name).Not.Contains(" ", "Name không nên chứa khoảng trắng").StartsWith("A", "Name nên bắt đầu bằng A hoặc B").Or.StartsWith("B", "Name nên bắt đầu bằng B");
+
+var b = v.IsValid;
+var c = v.Errors;
 //var testClone = testTable.Map<TestMap>();
 //testClone.Ten = "hahaha";
 //CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("vi-VN");

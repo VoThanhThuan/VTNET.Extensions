@@ -2,6 +2,10 @@
 using System.Linq;
 using System;
 using System.Reflection;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Text.RegularExpressions;
+using VTNET.Extensions.Models;
+using System.Linq.Expressions;
 
 namespace VTNET.Extensions;
 public static class ClassEx
@@ -9,8 +13,9 @@ public static class ClassEx
     public static T Map<T>(this object obj) where T : new()
     {
         // Tạo một đối tượng mới của kiểu T
-        T newObj = new T();
-
+        T newObj = new();
+        var a = new List<T>();
+        var b = a.Count();
         // Lấy thông tin về các thuộc tính của obj
         //var propertiesT = GetProperties<T>();
         var propertiesT = GetProperties<T>();
@@ -57,4 +62,12 @@ public static class ClassEx
             .ToDictionary(GetColumnName, prop => prop, matchCase ? StringComparer.Ordinal : StringComparer.OrdinalIgnoreCase);
         return properties;
     }
+
+    public static ValidatorFields<T> Validation<T>(T obj)
+    {
+        return new(obj);
+    }
+
 }
+
+
