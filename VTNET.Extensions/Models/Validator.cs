@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Text.RegularExpressions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace VTNET.Extensions.Models;
 public struct ValidatorFields<T>
@@ -25,8 +22,6 @@ public struct ValidatorFields<T>
             var propertyName = memberExpression.Member.Name;
             var func = property.Compile();
             var value = func(_obj);
-            //var propertyInfo = typeof(T).GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            //var value = propertyInfo?.GetValue(_obj);
 
             return new ValidatorsReturn<T>(_obj, propertyName, value, Errors);
         }
@@ -35,21 +30,10 @@ public struct ValidatorFields<T>
             throw new ArgumentException("The provided expression does not specify a valid property.", nameof(property));
         }
     }
-    //public ValidatorsReturn<T> Check(string fieldName)
-    //{
-    //    var field = _properties.FirstOrDefault(f => f.Name == fieldName);
-    //    if (field != null)
-    //    {
-    //        var value = field.GetValue(_obj);
-    //        return new ValidatorsReturn<T>(_obj, fieldName, value, _properties, Errors);
-    //    }
-    //    return new ValidatorsReturn<T>(_obj, "", null, false, _properties, Errors);
-    //}
 }
 
 public partial struct ValidatorsReturn<T>
 {
-    //public string Method { get; set; } = "";
     public bool IsValid => Errors.Count == 0;
     public List<ErrorExModel> Errors { get; }
     

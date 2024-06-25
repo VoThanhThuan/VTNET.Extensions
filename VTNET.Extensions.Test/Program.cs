@@ -70,7 +70,10 @@ var testTable = new TestTable()
 
 var v = ClassEx.Validation(testTable)
     .Check(x => x.Idx).Not.IsTextOnly("Idx chỉ nên là số")
-    .Check(x => x.Name).Not.Contains(" ", "Name không nên chứa khoảng trắng").StartsWith("A", "Name nên bắt đầu bằng A hoặc B").Or.StartsWith("B", "Name nên bắt đầu bằng B")
+    .Check(x => x.Name).Not.Contains(" ", "Name không nên chứa khoảng trắng")
+        .StartsWith("A", "Name nên bắt đầu bằng A hoặc B")
+        .Or
+        .StartsWith("B", "Name nên bắt đầu bằng B")
     .Check(x => x.Child.Age).Number(max: 23, message: "Tuổi tối đa là 23");
 
 var b = v.IsValid;
