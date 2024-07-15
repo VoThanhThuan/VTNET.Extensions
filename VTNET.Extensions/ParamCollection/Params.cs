@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace VTNET.Extensions;
 
@@ -108,26 +109,33 @@ public class Params<T> : IEnumerable<ParamValue<T>>
     {
         return this[index];
     }
-    public void Add(string name, T? value)
-    {
-        Parameters.Add(name, value);
-    }
-    public void Add(T? value)
+    protected virtual void AddHandler(T? value)
     {
         var prefix = "";
-        while(!Parameters.TryAdd($"{prefix}{Index++}", value))
+        while (!Parameters.TryAdd($"{prefix}{Index++}", value))
         {
             Index--;
             prefix += "#";
         }
     }
+    protected virtual void AddHandler(string name, T? value) => Parameters.Add(name, value);
+    protected virtual void AddHandler((string, T?) item) => Parameters.Add(item.Item1, item.Item2);
+    protected virtual void AddHandler(KeyValuePair<string, T?> item) => Parameters.Add(item.Key, item.Value);
+    public void Add(string name, T? value)
+    {
+        AddHandler(name, value);
+    }
+    public void Add(T? value)
+    {
+        AddHandler(value);
+    }
     public void Add((string, T?) item)
     {
-        Parameters.Add(item.Item1, item.Item2);
+        AddHandler(item);
     }
     public void Add(KeyValuePair<string, T?> item)
     {
-        Parameters.Add(item.Key, item.Value);
+        AddHandler(item);
     }
     public bool ContainsKey(string key)
     {
