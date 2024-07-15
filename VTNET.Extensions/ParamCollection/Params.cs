@@ -62,7 +62,8 @@ public class Params<T> : IEnumerable<ParamValue<T>>
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    public T? this[string key]
+
+    public virtual T? this[string key]
     {
         set
         {
@@ -71,7 +72,7 @@ public class Params<T> : IEnumerable<ParamValue<T>>
         get { return Parameters[key]; }
     }
 
-    public T? this[int index]
+    public virtual T? this[int index]
     {
         set
         {
@@ -97,19 +98,23 @@ public class Params<T> : IEnumerable<ParamValue<T>>
             }
         }
     }
-    public T? Get(string key)
+    public virtual T? Get(string key)
     {
         return Parameters[key];
     }
-    public void Set(string key, T? value)
+    public virtual void Set(string key, T? value)
     {
         Parameters[key] = value;
     }
-    public T? Get(int index)
+    public virtual T? Get(int index)
     {
         return this[index];
     }
-    protected virtual void AddHandler(T? value)
+    public virtual void Add(string name, T? value)
+    {
+        Parameters.Add(name, value);
+    }
+    public virtual void Add(T? value)
     {
         var prefix = "";
         while (!Parameters.TryAdd($"{prefix}{Index++}", value))
@@ -118,24 +123,13 @@ public class Params<T> : IEnumerable<ParamValue<T>>
             prefix += "#";
         }
     }
-    protected virtual void AddHandler(string name, T? value) => Parameters.Add(name, value);
-    protected virtual void AddHandler((string, T?) item) => Parameters.Add(item.Item1, item.Item2);
-    protected virtual void AddHandler(KeyValuePair<string, T?> item) => Parameters.Add(item.Key, item.Value);
-    public void Add(string name, T? value)
+    public virtual void Add((string, T?) item)
     {
-        AddHandler(name, value);
+        Parameters.Add(item.Item1, item.Item2);
     }
-    public void Add(T? value)
+    public virtual void Add(KeyValuePair<string, T?> item)
     {
-        AddHandler(value);
-    }
-    public void Add((string, T?) item)
-    {
-        AddHandler(item);
-    }
-    public void Add(KeyValuePair<string, T?> item)
-    {
-        AddHandler(item);
+        Parameters.Add(item.Key, item.Value);
     }
     public bool ContainsKey(string key)
     {
@@ -182,7 +176,7 @@ public class Params<T> : IEnumerable<ParamValue<T>>
         }
     }
 
-    public T? Pop(string key)
+    public virtual T? Pop(string key)
     {
         if (Parameters.TryGetValue(key, out var data))
         {
@@ -321,16 +315,6 @@ public class Params : Params<object>
         {
             yield return action((T?)item.Value);
         }
-    }
-
-    public T? Pop<T>(string key)
-    {
-        if (Parameters.TryGetValue(key, out var data))
-        {
-            Parameters.Remove(key);
-            return (T?)data;
-        }
-        return default;
     }
 
     public static implicit operator Params(object[] data)
