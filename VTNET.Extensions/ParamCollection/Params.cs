@@ -17,6 +17,7 @@ public class Params<T> : IEnumerable<ParamValue<T>>
 
     public ICollection<T?> Values => Parameters.Values;
     protected int Index => Parameters.Count;
+    protected int AmountAutoParams { get; set; }
     /// <summary>
     /// 
     /// </summary>
@@ -120,7 +121,7 @@ public class Params<T> : IEnumerable<ParamValue<T>>
         var prefix = "";
         while (!Parameters.TryAdd($"{prefix}{Index}", value))
         {
-            //Index--;
+            AmountAutoParams++;
             prefix += "#";
         }
     }

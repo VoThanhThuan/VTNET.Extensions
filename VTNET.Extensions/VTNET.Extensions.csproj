@@ -10,7 +10,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	<PackageReadmeFile>readme.md</PackageReadmeFile>
 	<PackageLicenseFile>LICENSE</PackageLicenseFile>
-	<Version>7.1.5</Version>
+	<Version>7.1.6</Version>
 
 	<!-- NuGet settings -->
 	<PackageId>VTNET.Extensions</PackageId>
