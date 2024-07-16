@@ -1,10 +1,21 @@
 ﻿using System.Text;
+using System.Text.Json;
 using VTNET.Extensions;
 
 Console.OutputEncoding = Encoding.UTF8;
 Console.InputEncoding = Encoding.UTF8;
 
-
+//var a = new Params
+//{
+//    {"a", 1 },
+//    { "b", 2 },
+//    { "c", 3 },
+//    { 4 },
+//    { 5 },
+//    { 6 },
+//};
+//var json = JsonSerializer.Serialize(a);
+//Console.WriteLine(json);
 //CalculateEx.AddVariable("không", 0);
 //CalculateEx.AddVariable("một", 1);
 //CalculateEx.AddVariable("hai", 2);

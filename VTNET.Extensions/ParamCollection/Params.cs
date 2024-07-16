@@ -4,18 +4,19 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Xml.Linq;
+using System.Text.Json.Serialization;
 
 namespace VTNET.Extensions;
 
 public class Params<T> : IEnumerable<ParamValue<T>>
 {
+    [JsonIgnore]
     protected Dictionary<string, T?> Parameters { get; set; } = new();
     public int Count { get => Parameters.Count; }
     public ICollection<string> Keys => Parameters.Keys;
 
     public ICollection<T?> Values => Parameters.Values;
-    protected int Index { get; set; } = 0;
+    protected int Index => Parameters.Count;
     /// <summary>
     /// 
     /// </summary>
@@ -117,9 +118,9 @@ public class Params<T> : IEnumerable<ParamValue<T>>
     public virtual void Add(T? value)
     {
         var prefix = "";
-        while (!Parameters.TryAdd($"{prefix}{Index++}", value))
+        while (!Parameters.TryAdd($"{prefix}{Index}", value))
         {
-            Index--;
+            //Index--;
             prefix += "#";
         }
     }
@@ -371,7 +372,9 @@ public readonly struct ParamValue<T>
     }
     public string Key => _key;
     public T? Value => _value;
+    [JsonIgnore]
     public bool IsAutoKey => _autokey;
+    [JsonIgnore]
     public Type ValueType => _valueType;
 
     public override string ToString()
