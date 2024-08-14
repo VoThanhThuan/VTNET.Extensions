@@ -19,14 +19,16 @@ namespace VTNET.Extensions
         public static string ToWordsEnglish(decimal number)
         {
             if (number < 0) return Empty;
+            CultureInfo culture = CultureInfo.CurrentCulture;
+            string decimalSeparator = culture.NumberFormat.NumberDecimalSeparator;
+
             decimal fractionalDigits = number % 1;
             string integralDigitsString = number
-                .ToString(CultureInfo.InvariantCulture)
-                .Split('.')
+                .ToString(CultureInfo.CurrentCulture)
+                .Split(decimalSeparator)
                 .ElementAt(0);
-            string fractionalDigitsString = fractionalDigits.ToString($"F2",
-                                                    CultureInfo.InvariantCulture)
-                                                .Split('.')
+            string fractionalDigitsString = fractionalDigits.ToString(CultureInfo.CurrentCulture)
+                                                .Split(decimalSeparator)
                                                 .ElementAtOrDefault(1) ?? Empty;
             if (decimal.Parse(integralDigitsString) < 0 && decimal.Parse(fractionalDigitsString) < 0) return Empty;
 
@@ -37,7 +39,7 @@ namespace VTNET.Extensions
                 //integralWords = integralWords;
             }
 
-            if (int.Parse(fractionalDigitsString) < 0 || IsNullOrEmpty(fractionalDigitsString)) return integralWords;
+            if (IsNullOrEmpty(fractionalDigitsString) || int.Parse(fractionalDigitsString) < 0) return integralWords;
 
             string fractionalWords = _conversionFactory.ConvertDigits(fractionalDigitsString);
 
@@ -74,7 +76,7 @@ namespace VTNET.Extensions
             var splitFloatNumber = inputNumber.ToString().Split(decimalSeparator.ToCharArray());
             string floatNumber = splitFloatNumber.Length > 1 ? splitFloatNumber[1] : "";
             string sNumber = splitFloatNumber[0] == "0" ? "" : splitFloatNumber[0];
-            decimal number = sNumber.IsNullOrEmpty() ? 0 : Convert.ToDecimal(sNumber);
+            decimal number = IsNullOrEmpty(sNumber) ? 0 : Convert.ToDecimal(sNumber);
             if (number < 0)
             {
                 number = -number;

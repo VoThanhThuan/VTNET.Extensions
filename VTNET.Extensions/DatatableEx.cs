@@ -15,10 +15,12 @@ namespace VTNET.Extensions
             var data = new T();
             var type = typeof(T);
             var propertiesInfo = type.GetProperties().Where(prop => prop.GetCustomAttribute<IgnoreMapNameAttribute>() == null);
+            var columns = row.Table.Columns;
             foreach (var property in propertiesInfo)
             {
                 var attribute = (MapNameAttribute?)property.GetCustomAttribute(typeof(MapNameAttribute));
                 var propertyName = attribute?.Name ?? property.Name;
+                if (!columns.Contains(propertyName)) continue;
                 var value = row[propertyName];
                 if (value != DBNull.Value)
                 {

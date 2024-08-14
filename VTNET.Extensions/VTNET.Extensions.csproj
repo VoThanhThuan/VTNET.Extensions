@@ -10,7 +10,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	<PackageReadmeFile>readme.md</PackageReadmeFile>
 	<PackageLicenseFile>LICENSE</PackageLicenseFile>
-	<Version>7.1.7</Version>
+	<Version>7.1.8</Version>
 
 	<!-- NuGet settings -->
 	<PackageId>VTNET.Extensions</PackageId>
@@ -30,5 +30,10 @@
 		</None>
 		<None Include="LICENSE" Pack="True" PackagePath="\" />
 		<None Include="..\readme.md" Pack="true" PackagePath="" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Reference Include="VTNET.Extensions.NumbersToWords">
+	    <HintPath>..\VTNET.Extensions.NumbersToWords\bin\Release\netstandard2.1\publish\VTNET.Extensions.NumbersToWords.dll</HintPath>
+	  </Reference>
 	</ItemGroup>
 </Project>

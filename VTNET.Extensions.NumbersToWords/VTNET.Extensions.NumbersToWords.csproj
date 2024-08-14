@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>enable</Nullable>
+	<Authors>VTNET</Authors>
+	<Description>This library supports converting numbers to words (English, Vietnamese).</Description>
+	<Copyright>Copyright (c) 2023 Vo Thanh Thuan</Copyright>
+	<FileVersion></FileVersion>
+	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<PackageReadmeFile>readme.md</PackageReadmeFile>
+	<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	<Version>0.0.1</Version>
+
+	<!-- NuGet settings -->
+	<PackageId>VTNET.Extensions.NumbersToWords</PackageId>
+	<PackageTags>NumbersToWords</PackageTags>
+	<PackageProjectUrl>https://github.com/VoThanhThuan/VTNET.Extensions</PackageProjectUrl>
+
+	<RepositoryType>git</RepositoryType>
+	<RepositoryUrl>https://github.com/VoThanhThuan/VTNET.Extensions</RepositoryUrl>
+	<PackageIcon>VTNET_E_more.png</PackageIcon>
+	<Title>Numbers To Words</Title>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\VTNET_E_more.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="LICENSE" Pack="True" PackagePath="\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="readme.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Update="VTNET_E_more.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+</Project>
