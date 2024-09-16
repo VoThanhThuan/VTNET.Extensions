@@ -23,6 +23,7 @@ namespace VTNET.Extensions
         static Dictionary<string, Func<decimal?, decimal?, decimal?>> _FunctionOperators = new();
         static Dictionary<string, decimal> _VariablesDefine = new() { { "pi", (decimal)Math.PI}, { "e", (decimal)Math.E} };
         static List<string> _VariablesOrder = new() { "pi", "e" };
+        static HashSet<string> _listChar = new() { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "(", ")", "%", "!" };
         static CultureInfo _calculateCulture = CultureInfo.InvariantCulture;
         public static CultureInfo Culture { get => _calculateCulture; set => _calculateCulture = value; }
 
@@ -196,7 +197,21 @@ namespace VTNET.Extensions
             }
             return stringValue;
         }
-
+        static bool CheckDoupleOperators(string strMath)
+        {
+            if (strMath.Length < 2) return false;
+            var first = strMath[0].ToString();
+            var second = strMath[1].ToString();
+            var count = 0;
+            foreach (var item in _operatorPriority)
+            {
+                if(item.Key == first || item.Key == second)
+                {
+                    count++;
+                }
+            }
+            return count > 1;
+        }
         static decimal? CalculateSimple(ref string strMath, Stack<decimal?> values, Stack<string> operators, CultureInfo? calculateCulture = null)
         {
             calculateCulture ??= _calculateCulture;
@@ -210,7 +225,7 @@ namespace VTNET.Extensions
             // Operator handler
             while (!string.IsNullOrEmpty(strMath) && loop)
             {
-                var op = strMath[..1];
+                var op = strMath[..1];               
                 strMath = strMath[1..];
                 switch (op)
                 {
@@ -289,13 +304,12 @@ namespace VTNET.Extensions
                                     result = ExecuteOperation(operators.Pop(), values.Pop(), values.Pop());
                                     values.Push(result);
                                 }
-
                                 operators.Push(op);
-                                }
-                                else
-                                {
-                                    stringValue += op;
-                                }
+                            }
+                            else
+                            {
+                                stringValue += op;
+                            }
 
                         }
                         break;
@@ -460,8 +474,17 @@ namespace VTNET.Extensions
                     }
                 }
                 else
-                {                    
-                    CalculateSimple(ref input, values, operators, calculateCulture);
+                {
+                    var op = input[0].ToString();
+                    if (_operatorPriority.TryGetValue(op, out var _) && values.Count > 0)
+                    {
+                        input = input[1..];
+                        operators.Push(op);
+                    }
+                    else
+                    {
+                        CalculateSimple(ref input, values, operators, calculateCulture);
+                    }
                 }
             }
             if (!string.IsNullOrEmpty(stringValue))
