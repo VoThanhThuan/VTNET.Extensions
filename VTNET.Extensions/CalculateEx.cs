@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using VTNET.Extensions.Models;
 
@@ -23,7 +22,7 @@ namespace VTNET.Extensions
         static Dictionary<string, Func<decimal?, decimal?, decimal?>> _FunctionOperators = new();
         static Dictionary<string, decimal> _VariablesDefine = new() { { "pi", (decimal)Math.PI}, { "e", (decimal)Math.E} };
         static List<string> _VariablesOrder = new() { "pi", "e" };
-        static HashSet<string> _listChar = new() { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "(", ")", "%", "!" };
+        //static HashSet<string> _listChar = new() { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "(", ")", "%", "!" };
         static CultureInfo _calculateCulture = CultureInfo.InvariantCulture;
         public static CultureInfo Culture { get => _calculateCulture; set => _calculateCulture = value; }
 
